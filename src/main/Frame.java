@@ -337,12 +337,13 @@ public class Frame implements ActionListener {
 		if (event.getSource() == buttonSearch) {
 			try {
 				String search = JOptionPane.showInputDialog("");
-				if (search == "") {
-					search = JOptionPane.showInputDialog("Invalid!");
-				} else if (search == null) {
+				if (search != null) {
+					if (search.equals("")) {
+						search = JOptionPane.showInputDialog("Invalid!");
 
-				} else {
-					Scanner(search);
+					} else {
+						Scanner(search);
+					}
 				}
 
 			} catch (HeadlessException e1) {
@@ -374,11 +375,11 @@ public class Frame implements ActionListener {
 	public void Scanner(String string) throws IOException {
 		final Scanner scanner = new Scanner(Paths.get(path));
 		int i = 0;
-		String[] results = new String[1000];
+		String[] results = new String[1000000];
 		while (scanner.hasNextLine()) {
 			final String lineFromFile = scanner.nextLine();
 			String search = lineFromFile.toUpperCase();
-			
+
 			if (search.contains(string.toUpperCase())) {
 				if (!lineFromFile.isEmpty()) {
 					search.equalsIgnoreCase(string);
