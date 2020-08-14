@@ -175,7 +175,6 @@ public class Frame implements ActionListener {
 	}
 
 	public void createNewFile(String name) throws IOException {
-		System.out.println(name);
 		path = name + ".txt";
 		if (Files.exists(Paths.get(path)) == false) {
 			Path fileToCreatePath = Paths.get(path);
@@ -309,7 +308,15 @@ public class Frame implements ActionListener {
 
 		if (event.getSource() == buttonSearch) {
 			try {
-				Scanner(JOptionPane.showInputDialog(""));
+				String search = JOptionPane.showInputDialog("");
+				if (search == "") {
+					search = JOptionPane.showInputDialog("Invalid!");
+				} else if (search == null) {
+
+				} else {
+					Scanner(search);
+				}
+
 			} catch (HeadlessException e1) {
 				e1.printStackTrace();
 			} catch (IOException e1) {
