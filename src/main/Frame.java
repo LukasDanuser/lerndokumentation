@@ -182,6 +182,7 @@ public class Frame implements ActionListener {
 			Path newFilePath = Files.createFile(fileToCreatePath);
 			System.out.println("New file created: " + newFilePath);
 			System.out.println("New File exits: " + Files.exists(newFilePath));
+			textArea.setText(Files.readString(Paths.get(path)));
 			frame.setTitle(path);
 		}
 	}
@@ -209,7 +210,22 @@ public class Frame implements ActionListener {
 
 		if (event.getSource() == buttonChangeFile) {
 			try {
-				changeFile();
+				if (JOptionPane.showConfirmDialog(null, "Create new file?", "", JOptionPane.YES_NO_OPTION,
+						JOptionPane.QUESTION_MESSAGE) == 0) {
+					newFile = true;
+					String name = JOptionPane.showInputDialog(null, "File name");
+
+					if (name == null) {
+
+					} else {
+						fileName = name;
+						createNewFile(fileName);
+					}
+
+				} else {
+					changeFile();
+				}
+
 			} catch (IOException e) {
 				e.printStackTrace();
 			}
