@@ -21,9 +21,6 @@ public class Frame implements ActionListener {
 	public static String fileName;
 	public static String path;
 
-	SimpleDateFormat formatter = new SimpleDateFormat("dd/MM/yyyy HH:mm");
-	Date date = new Date();
-
 	int WIDTH = 700;
 	int HEIGHT = 700;
 
@@ -190,6 +187,9 @@ public class Frame implements ActionListener {
 	@Override
 	public void actionPerformed(ActionEvent event) {
 
+		SimpleDateFormat formatter = new SimpleDateFormat("dd/MM/yyyy HH:mm");
+		Date date = new Date();
+
 		String text = textField.getText();
 		String text2 = textArea.getText();
 		boolean isFieldEmpty = false;
@@ -201,8 +201,8 @@ public class Frame implements ActionListener {
 
 		if (event.getSource() == buttonOpen) {
 			String[] options = { "File", "Directory" };
-			int i = JOptionPane.showOptionDialog(null, "Open file or directory?", "", JOptionPane.DEFAULT_OPTION, JOptionPane.QUESTION_MESSAGE,
-					null, options, options[0]);
+			int i = JOptionPane.showOptionDialog(null, "Open file or directory?", "", JOptionPane.DEFAULT_OPTION,
+					JOptionPane.QUESTION_MESSAGE, null, options, options[0]);
 			if (i == 0) {
 				String absolutePath = Paths.get(path).toAbsolutePath().toString();
 				try {
@@ -377,17 +377,13 @@ public class Frame implements ActionListener {
 		String[] results = new String[1000];
 		while (scanner.hasNextLine()) {
 			final String lineFromFile = scanner.nextLine();
-			String search = "";
-			String result = "";
-			search.equalsIgnoreCase(string);
-			if (lineFromFile.contains(search)) {
+			String search = lineFromFile.toUpperCase();
+			
+			if (search.contains(string.toUpperCase())) {
 				if (!lineFromFile.isEmpty()) {
-					result = lineFromFile;
-					if (i > 0) {
-						i++;
-					}
-					results[i] = result;
-					i++;
+					search.equalsIgnoreCase(string);
+					results[i++] = lineFromFile;
+
 				}
 			}
 		}
