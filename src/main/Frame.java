@@ -97,7 +97,7 @@ public class Frame implements ActionListener {
 		buttonChangeFile.setBorder(BorderFactory.createEtchedBorder());
 		buttonChangeFile.setFocusable(false);
 
-		buttonOpen = new JButton("Open file");
+		buttonOpen = new JButton("Open path");
 		buttonOpen.setBounds(150, 50, 120, 60);
 		buttonOpen.addActionListener(this);
 		buttonOpen.setBackground(new Color(125, 125, 125));
@@ -200,11 +200,23 @@ public class Frame implements ActionListener {
 		path = fileName + ".txt";
 
 		if (event.getSource() == buttonOpen) {
-			String absolutePath = Paths.get(path).toAbsolutePath().toString();
-			try {
-				Desktop.getDesktop().open(new File(absolutePath));
-			} catch (IOException e) {
-				e.printStackTrace();
+			String[] options = { "File", "Directory" };
+			int i = JOptionPane.showOptionDialog(null, "Open file or directory?", "", JOptionPane.DEFAULT_OPTION, JOptionPane.QUESTION_MESSAGE,
+					null, options, options[0]);
+			if (i == 0) {
+				String absolutePath = Paths.get(path).toAbsolutePath().toString();
+				try {
+					Desktop.getDesktop().open(new File(absolutePath));
+				} catch (IOException e) {
+					e.printStackTrace();
+				}
+			} else {
+				String absolutePath = Paths.get(path).toAbsolutePath().getParent().toString();
+				try {
+					Desktop.getDesktop().open(new File(absolutePath));
+				} catch (IOException e) {
+					e.printStackTrace();
+				}
 			}
 		}
 
