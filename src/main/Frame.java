@@ -34,7 +34,7 @@ public class Frame implements ActionListener {
 	JButton buttonOpen;
 	JTextField textField;
 	JTextArea textArea;
-
+	
 	public Frame() {
 
 		textArea = new JTextArea();
@@ -375,7 +375,7 @@ public class Frame implements ActionListener {
 	public void Scanner(String string) throws IOException {
 		final Scanner scanner = new Scanner(Paths.get(path));
 		int i = 0;
-		String[] results = new String[1000000];
+		String[] results = new String[2000000];
 		while (scanner.hasNextLine()) {
 			final String lineFromFile = scanner.nextLine();
 			String search = lineFromFile.toUpperCase();
