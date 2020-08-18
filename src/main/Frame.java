@@ -298,7 +298,7 @@ public class Frame implements ActionListener {
 					if (isFileEmpty == true) {
 						Files.writeString(Paths.get(path), Files.readString(Paths.get(path)) + text);
 					} else {
-						Files.writeString(Paths.get(path), Files.readString(Paths.get(path)) + "\n" + text);
+						Files.writeString(Paths.get(path), Files.readString(Paths.get(path)) + text);
 					}
 
 				} else if (isFieldEmpty == false) {
