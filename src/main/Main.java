@@ -4,12 +4,46 @@ import java.io.IOException;
 import java.nio.file.Files;
 import java.nio.file.Path;
 import java.nio.file.Paths;
+import java.util.logging.Level;
+import java.util.logging.Logger;
 
 import javax.swing.JOptionPane;
+
+import com.mongodb.DB;
+import com.mongodb.DBCollection;
+import com.mongodb.DBObject;
+import com.mongodb.MongoClient;
 
 public class Main {
 
 	public static void main(String[] args) throws IOException {
+		Logger mongoLogger = Logger.getLogger("org.mongodb.driver");
+		mongoLogger.setLevel(Level.SEVERE);
+		@SuppressWarnings("resource")
+		MongoClient client = new MongoClient("localhost", 27017);
+		@SuppressWarnings("deprecation")
+		DB db = client.getDB("lerndokumentation");
+		DBCollection collection = db.getCollection("users");
+
+		DBObject dbo = collection.findOne();
+
+		String username2 = JOptionPane.showInputDialog(null, "username", "", JOptionPane.INFORMATION_MESSAGE);
+		String password2 = JOptionPane.showInputDialog(null, "password", "", JOptionPane.INFORMATION_MESSAGE);
+		
+		String test = dbo.get("_id").toString();
+		String username = dbo.get("username").toString();
+		String password = dbo.get("password").toString();
+		String role = dbo.get("role").toString();
+		System.out.println(test);
+		
+		
+		if (!username2.equals(username)) {
+			System.exit(1);
+		}
+
+		if (!password2.equals(password)) {
+			System.exit(1);
+		}
 
 		int answer = JOptionPane.showConfirmDialog(null, "Create new file?", "", JOptionPane.YES_NO_CANCEL_OPTION,
 				JOptionPane.QUESTION_MESSAGE);
