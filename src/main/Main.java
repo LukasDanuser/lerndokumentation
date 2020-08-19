@@ -9,8 +9,10 @@ import java.util.logging.Logger;
 
 import javax.swing.JOptionPane;
 
+import com.mongodb.BasicDBObject;
 import com.mongodb.DB;
 import com.mongodb.DBCollection;
+import com.mongodb.DBCursor;
 import com.mongodb.DBObject;
 import com.mongodb.MongoClient;
 
@@ -23,27 +25,80 @@ public class Main {
 		MongoClient client = new MongoClient("localhost", 27017);
 		@SuppressWarnings("deprecation")
 		DB db = client.getDB("lerndokumentation");
+
 		DBCollection collection = db.getCollection("users");
 
-		DBObject dbo = collection.findOne();
+		String username2 = JOptionPane.showInputDialog(null, "Enter username", "", JOptionPane.INFORMATION_MESSAGE);
 
-		String username2 = JOptionPane.showInputDialog(null, "username", "", JOptionPane.INFORMATION_MESSAGE);
-		String password2 = JOptionPane.showInputDialog(null, "password", "", JOptionPane.INFORMATION_MESSAGE);
-		
-		String test = dbo.get("_id").toString();
-		String username = dbo.get("username").toString();
-		String password = dbo.get("password").toString();
-		String role = dbo.get("role").toString();
-		System.out.println(test);
-		
-		
-		if (!username2.equals(username)) {
+		DBCursor results = collection.find(new BasicDBObject("username", username2));
+
+		String username = "";
+		boolean usernameExists = false;
+
+		if (username2 == null) {
+			System.exit(1);
+		}
+
+		try {
+			username = results.one().get("username").toString();
+		} catch (NullPointerException e1) {
+			usernameExists = false;
+			while (usernameExists == false) {
+				try {
+					username2 = JOptionPane.showInputDialog(null, "Enter username", "Username does not exist!",
+							JOptionPane.INFORMATION_MESSAGE);
+					results = collection.find(new BasicDBObject("username", username2));
+					username = results.one().get("username").toString();
+				} catch (NullPointerException e2) {
+					usernameExists = false;
+					username2 = JOptionPane.showInputDialog(null, "Enter username", "Username does not exist!",
+							JOptionPane.INFORMATION_MESSAGE);
+					results = collection.find(new BasicDBObject("username", username2));
+					username = results.one().get("username").toString();
+					if (username != null) {
+						usernameExists = true;
+					}
+				}
+			}
+		}
+
+		boolean isPasswordCorrect = false;
+
+		String password2 = JOptionPane.showInputDialog(null, "Enter password", "", JOptionPane.INFORMATION_MESSAGE);
+		String password = results.one().get("password").toString();
+
+		if (password2 == null) {
 			System.exit(1);
 		}
 
 		if (!password2.equals(password)) {
-			System.exit(1);
+			isPasswordCorrect = false;
+			while (isPasswordCorrect == false) {
+				password2 = JOptionPane.showInputDialog(null, "Enter password", "Invalid password!",
+						JOptionPane.INFORMATION_MESSAGE);
+
+				if (!password2.equals(password)) {
+					password2 = JOptionPane.showInputDialog(null, "Enter password", "Invalid password!",
+							JOptionPane.INFORMATION_MESSAGE);
+
+					if (password.equals(password2)) {
+						isPasswordCorrect = true;
+					}
+				}
+
+				if (password.equals(password2)) {
+					isPasswordCorrect = true;
+				}
+
+				if (password2 == null) {
+					System.exit(1);
+				}
+
+			}
+
 		}
+
+		String role = results.one().get("role").toString();
 
 		int answer = JOptionPane.showConfirmDialog(null, "Create new file?", "", JOptionPane.YES_NO_CANCEL_OPTION,
 				JOptionPane.QUESTION_MESSAGE);
