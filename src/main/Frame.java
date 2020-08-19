@@ -13,9 +13,20 @@ import java.util.Scanner;
 
 import javax.swing.*;
 
+import com.mongodb.BasicDBObject;
+import com.mongodb.DB;
+import com.mongodb.DBCollection;
+import com.mongodb.DBObject;
+import com.mongodb.MongoClient;
+
 import main.Frame;
 
 public class Frame implements ActionListener {
+
+	MongoClient client = new MongoClient("localhost", 27017);
+	@SuppressWarnings("deprecation")
+	DB db = client.getDB("lerndokumentation");
+	DBCollection collection = db.getCollection("users");
 
 	public static boolean newFile;
 	public static String fileName;
@@ -27,6 +38,7 @@ public class Frame implements ActionListener {
 	public static JFrame frame;
 	JButton buttonSave;
 	JButton buttonClear;
+	JButton buttenNewUser;
 	JButton buttonRefresh;
 	JButton buttonSearch;
 	JButton buttonChangeFile;
@@ -34,7 +46,7 @@ public class Frame implements ActionListener {
 	JButton buttonOpen;
 	JTextField textField;
 	JTextArea textArea;
-	
+
 	public Frame() {
 
 		textArea = new JTextArea();
@@ -57,6 +69,15 @@ public class Frame implements ActionListener {
 		buttonSave.setForeground(new Color(250, 250, 250));
 		buttonSave.setBorder(BorderFactory.createEtchedBorder());
 		buttonSave.setFocusable(false);
+
+		buttenNewUser = new JButton("New User");
+		buttenNewUser.setBounds(150, 50, 120, 60);
+		buttenNewUser.addActionListener(this);
+		buttenNewUser.setBackground(new Color(125, 125, 125));
+		buttenNewUser.setFont(new Font("Comic Sans", Font.ITALIC, 15));
+		buttenNewUser.setForeground(new Color(250, 250, 250));
+		buttenNewUser.setBorder(BorderFactory.createEtchedBorder());
+		buttenNewUser.setFocusable(false);
 
 		buttonClear = new JButton("Clear File");
 		buttonClear.setBounds(150, 50, 120, 60);
@@ -117,6 +138,9 @@ public class Frame implements ActionListener {
 		frame.setLayout(new FlowLayout());
 		frame.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
 		frame.add(buttonSave);
+		if (Main.role.equals("admin")) {
+			frame.add(buttenNewUser);
+		}
 		frame.add(buttonClear);
 		frame.add(buttonRefresh);
 		frame.add(buttonSearch);
@@ -198,6 +222,101 @@ public class Frame implements ActionListener {
 			isFieldEmpty = true;
 		}
 		path = fileName + ".txt";
+
+		if (event.getSource() == buttenNewUser) {
+			String[] options = { "Admin", "Default", "Cancel" };
+			int option = JOptionPane.showOptionDialog(null, "Role", "", JOptionPane.DEFAULT_OPTION,
+					JOptionPane.INFORMATION_MESSAGE, null, options, options[0]);
+			String role = "";
+
+			if (option == 0) {
+				role = "admin";
+			} else if (option == 1) {
+				role = "default";
+			} else if (option == 2) {
+
+			}
+			if (option != 2) {
+				boolean isValid = false;
+				String username = JOptionPane.showInputDialog(null, "Enter username", "", JOptionPane.DEFAULT_OPTION);
+				if (username == null) {
+					isValid = true;
+				}
+
+				if (isValid == false && username.equals("")) {
+					isValid = false;
+					while (isValid == false) {
+						if (username == null) {
+							break;
+						}
+						username = JOptionPane.showInputDialog(null, "Enter username", "Invalid!",
+								JOptionPane.DEFAULT_OPTION);
+						if (username == null) {
+							break;
+						}
+						if (username.equals("")) {
+							username = JOptionPane.showInputDialog(null, "Enter username", "Invalid!",
+									JOptionPane.DEFAULT_OPTION);
+							if (username == null) {
+								break;
+							}
+						}
+
+						if (!username.equals("")) {
+							isValid = true;
+						}
+
+					}
+				} else {
+					isValid = true;
+				}
+				String password = "";
+				if (username != null) {
+					password = JOptionPane.showInputDialog(null, "Enter new password", "", JOptionPane.DEFAULT_OPTION);
+				}
+
+				if (password == null) {
+					isValid = true;
+				}
+
+				if (isValid == false && password.equals("")) {
+					isValid = false;
+					while (isValid == false) {
+						if (password == null) {
+							break;
+						}
+						password = JOptionPane.showInputDialog(null, "Enter new password", "Invalid!",
+								JOptionPane.DEFAULT_OPTION);
+						if (password == null) {
+							break;
+						}
+						if (password.equals("")) {
+							password = JOptionPane.showInputDialog(null, "Enter new password", "Invalid!",
+									JOptionPane.DEFAULT_OPTION);
+							if (password == null) {
+								break;
+							}
+						}
+
+						if (!password.equals("")) {
+							isValid = true;
+						}
+
+					}
+				} else {
+					isValid = true;
+				}
+
+				if (isValid && username != null && password != null) {
+					DBObject user = new BasicDBObject("username", username).append("password", password).append("role",
+							role);
+					collection.insert(user);
+					JOptionPane.showMessageDialog(null, "User added", "New user", JOptionPane.INFORMATION_MESSAGE);
+				}
+
+			}
+
+		}
 
 		if (event.getSource() == buttonOpen) {
 			String[] options = { "File", "Directory" };

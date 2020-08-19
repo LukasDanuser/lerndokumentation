@@ -13,11 +13,12 @@ import com.mongodb.BasicDBObject;
 import com.mongodb.DB;
 import com.mongodb.DBCollection;
 import com.mongodb.DBCursor;
-import com.mongodb.DBObject;
 import com.mongodb.MongoClient;
 
 public class Main {
 
+	public static String role;
+	
 	public static void main(String[] args) throws IOException {
 		Logger mongoLogger = Logger.getLogger("org.mongodb.driver");
 		mongoLogger.setLevel(Level.SEVERE);
@@ -97,8 +98,7 @@ public class Main {
 			}
 
 		}
-
-		String role = results.one().get("role").toString();
+		role = results.one().get("role").toString();
 
 		int answer = JOptionPane.showConfirmDialog(null, "Create new file?", "", JOptionPane.YES_NO_CANCEL_OPTION,
 				JOptionPane.QUESTION_MESSAGE);
