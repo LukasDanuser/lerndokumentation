@@ -14,16 +14,21 @@ import com.mongodb.DB;
 import com.mongodb.DBCollection;
 import com.mongodb.DBCursor;
 import com.mongodb.MongoClient;
+import com.mongodb.MongoClientURI;
 
 public class Main {
 
 	public static String role;
-	
+
 	public static void main(String[] args) throws IOException {
 		Logger mongoLogger = Logger.getLogger("org.mongodb.driver");
 		mongoLogger.setLevel(Level.SEVERE);
+		@SuppressWarnings( "unused" )
+		MongoClientURI uri = new MongoClientURI(
+				"mongodb://lukas:secret.8@cluster0-shard-00-00.ez8ii.mongodb.net:27017,cluster0-shard-00-01.ez8ii.mongodb.net:27017,cluster0-shard-00-02.ez8ii.mongodb.net:27017/lerndokumentation?ssl=true&replicaSet=atlas-atekpy-shard-0&authSource=admin&retryWrites=true&w=majority");
 		@SuppressWarnings("resource")
 		MongoClient client = new MongoClient("localhost", 27017);
+
 		@SuppressWarnings("deprecation")
 		DB db = client.getDB("lerndokumentation");
 
@@ -55,8 +60,15 @@ public class Main {
 					username2 = JOptionPane.showInputDialog(null, "Enter username", "Username does not exist!",
 							JOptionPane.INFORMATION_MESSAGE);
 					results = collection.find(new BasicDBObject("username", username2));
-					username = results.one().get("username").toString();
-					if (username != null) {
+					try {
+						username2 = JOptionPane.showInputDialog(null, "Enter username", "Username does not exist!",
+								JOptionPane.INFORMATION_MESSAGE);
+						results = collection.find(new BasicDBObject("username", username2));
+						username = results.one().get("username").toString();						
+					} catch (NullPointerException e3) {
+						username = "";
+					}
+					if (username != null && username.equals(username2)) {
 						usernameExists = true;
 					}
 				}
@@ -100,11 +112,26 @@ public class Main {
 		}
 		role = results.one().get("role").toString();
 
+		collection = db.getCollection(username);
+
 		int answer = JOptionPane.showConfirmDialog(null, "Create new file?", "", JOptionPane.YES_NO_CANCEL_OPTION,
 				JOptionPane.QUESTION_MESSAGE);
 		if (answer == 0) {
 			Frame.newFile = true;
 			Frame.fileName = JOptionPane.showInputDialog(null, "File name");
+			if (Frame.fileName.equals("")) {
+				boolean valid = false;
+				while (valid == false) {
+					Frame.fileName = JOptionPane.showInputDialog(null, "File name", "Invalid!",
+							JOptionPane.INFORMATION_MESSAGE);
+					if (Frame.fileName == null) {
+						System.exit(1);
+					}
+					if (!Frame.fileName.equals("")) {
+						valid = true;
+					}
+				}
+			}
 			String input = Frame.fileName;
 
 			if (input == null) {

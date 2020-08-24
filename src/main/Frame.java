@@ -18,12 +18,15 @@ import com.mongodb.DB;
 import com.mongodb.DBCollection;
 import com.mongodb.DBObject;
 import com.mongodb.MongoClient;
+import com.mongodb.MongoClientURI;
 
 import main.Frame;
 
 public class Frame implements ActionListener {
 
-	MongoClient client = new MongoClient("localhost", 27017);
+	MongoClientURI uri = new MongoClientURI(
+			"mongodb://lukas:secret.8@cluster0-shard-00-00.ez8ii.mongodb.net:27017,cluster0-shard-00-01.ez8ii.mongodb.net:27017,cluster0-shard-00-02.ez8ii.mongodb.net:27017/lerndokumentation?ssl=true&replicaSet=atlas-atekpy-shard-0&authSource=admin&retryWrites=true&w=majority");
+	MongoClient client = new MongoClient("localhost" , 27017);
 	@SuppressWarnings("deprecation")
 	DB db = client.getDB("lerndokumentation");
 	DBCollection collection = db.getCollection("users");
@@ -47,7 +50,7 @@ public class Frame implements ActionListener {
 	JTextField textField;
 	JTextArea textArea;
 
-	public Frame() {
+	public Frame() throws IOException {
 
 		textArea = new JTextArea();
 		textArea.setSize(WIDTH - 50, HEIGHT - 100);
@@ -164,7 +167,6 @@ public class Frame implements ActionListener {
 				e.printStackTrace();
 			}
 		}
-
 	}
 
 	public void changeFile() throws IOException {
