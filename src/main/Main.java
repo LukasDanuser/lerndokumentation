@@ -17,7 +17,7 @@ import com.mongodb.MongoClient;
 import com.mongodb.MongoClientURI;
 
 public class Main {
-//test
+
 	public static String role;
 	public static String username = "";
 
