@@ -411,7 +411,7 @@ public class Frame implements ActionListener {
 			try {
 
 				createNewFile(fileName);
-//test
+
 				if (Files.size(Paths.get(path)) != 0) {
 					isFileEmpty = false;
 				} else {
