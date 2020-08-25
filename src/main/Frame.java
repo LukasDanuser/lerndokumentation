@@ -16,6 +16,7 @@ import javax.swing.*;
 import com.mongodb.BasicDBObject;
 import com.mongodb.DB;
 import com.mongodb.DBCollection;
+import com.mongodb.DBCursor;
 import com.mongodb.DBObject;
 import com.mongodb.MongoClient;
 import com.mongodb.MongoClientURI;
@@ -26,7 +27,7 @@ public class Frame implements ActionListener {
 
 	MongoClientURI uri = new MongoClientURI(
 			"mongodb://lukas:secret.8@cluster0-shard-00-00.ez8ii.mongodb.net:27017,cluster0-shard-00-01.ez8ii.mongodb.net:27017,cluster0-shard-00-02.ez8ii.mongodb.net:27017/lerndokumentation?ssl=true&replicaSet=atlas-atekpy-shard-0&authSource=admin&retryWrites=true&w=majority");
-	MongoClient client = new MongoClient("localhost" , 27017);
+	MongoClient client = new MongoClient("localhost", 27017);
 	@SuppressWarnings("deprecation")
 	DB db = client.getDB("lerndokumentation");
 	DBCollection collection = db.getCollection("users");
@@ -226,6 +227,7 @@ public class Frame implements ActionListener {
 		path = fileName + ".txt";
 
 		if (event.getSource() == buttenNewUser) {
+			String username = "";
 			String[] options = { "Admin", "Default", "Cancel" };
 			int option = JOptionPane.showOptionDialog(null, "Role", "", JOptionPane.DEFAULT_OPTION,
 					JOptionPane.INFORMATION_MESSAGE, null, options, options[0]);
@@ -240,7 +242,7 @@ public class Frame implements ActionListener {
 			}
 			if (option != 2) {
 				boolean isValid = false;
-				String username = JOptionPane.showInputDialog(null, "Enter username", "", JOptionPane.DEFAULT_OPTION);
+				username = JOptionPane.showInputDialog(null, "Enter username", "", JOptionPane.DEFAULT_OPTION);
 				if (username == null) {
 					isValid = true;
 				}
@@ -315,8 +317,9 @@ public class Frame implements ActionListener {
 					collection.insert(user);
 					JOptionPane.showMessageDialog(null, "User added", "New user", JOptionPane.INFORMATION_MESSAGE);
 				}
-
 			}
+			DBObject test = new BasicDBObject("", "");
+			db.createCollection(username, test);
 
 		}
 
@@ -344,7 +347,7 @@ public class Frame implements ActionListener {
 		if (event.getSource() == buttonChangeFile) {
 			try {
 				if (JOptionPane.showConfirmDialog(null, "Create new file?", "", JOptionPane.YES_NO_OPTION,
-						JOptionPane.QUESTION_MESSAGE) == 0) {
+						JOptionPane.QUESTION_MESSAGE) == JOptionPane.YES_OPTION) {
 					newFile = true;
 					String name = JOptionPane.showInputDialog(null, "File name");
 
@@ -366,13 +369,13 @@ public class Frame implements ActionListener {
 
 		if (event.getSource() == buttonDelete) {
 			if (JOptionPane.showConfirmDialog(null, "This action can't be undo!\n Do you want to proceed",
-					"Delete file", JOptionPane.YES_NO_OPTION, JOptionPane.WARNING_MESSAGE) == 0) {
+					"Delete file", JOptionPane.YES_NO_OPTION, JOptionPane.WARNING_MESSAGE) == JOptionPane.YES_OPTION) {
 				try {
 					Files.delete(Paths.get(path));
 					textArea.setText("");
 					int input = JOptionPane.showConfirmDialog(null, "Create new file?", "",
 							JOptionPane.YES_NO_CANCEL_OPTION, JOptionPane.QUESTION_MESSAGE);
-					if (input == 0) {
+					if (input == JOptionPane.YES_OPTION) {
 						newFile = true;
 						fileName = JOptionPane.showInputDialog(null, "File name");
 
@@ -380,10 +383,10 @@ public class Frame implements ActionListener {
 							System.exit(1);
 						}
 						createNewFile(fileName);
-					} else if (input == 1) {
+					} else if (input == JOptionPane.NO_OPTION) {
 						newFile = false;
 						changeFile();
-					} else if (input == 2) {
+					} else if (input == JOptionPane.CANCEL_OPTION) {
 						System.exit(1);
 					}
 
@@ -439,12 +442,22 @@ public class Frame implements ActionListener {
 			} catch (IOException e) {
 				e.printStackTrace();
 			}
+			collection = db.getCollection(Main.username);
+			DBObject file;
+			try {
+				file = new BasicDBObject("fileName", path).append("content", Files.readString(Paths.get(path)));
+				collection.insert(file);
+				DBCursor results = collection.find(new BasicDBObject("content", Files.readString(Paths.get(path))));
+				System.out.println(results.one().get("content").toString());
+			} catch (IOException e) {
+				e.printStackTrace();
+			}
 
 		}
 
 		if (event.getSource() == buttonClear) {
 			if (JOptionPane.showConfirmDialog(null, "This action can't be undo!\n Do you want to proceed?",
-					"Clear file", JOptionPane.YES_NO_OPTION, JOptionPane.WARNING_MESSAGE) == 0) {
+					"Clear file", JOptionPane.YES_NO_OPTION, JOptionPane.WARNING_MESSAGE) == JOptionPane.YES_OPTION) {
 				try {
 					Files.writeString(Paths.get(path), "");
 					textArea.setText(Files.readString(Paths.get(path)));
@@ -484,6 +497,18 @@ public class Frame implements ActionListener {
 			} catch (IOException e) {
 				e.printStackTrace();
 			}
+
+			collection = db.getCollection(Main.username);
+			DBObject file;
+			try {
+				file = new BasicDBObject("fileName", path).append("content", Files.readString(Paths.get(path)));
+				collection.insert(file);
+				DBCursor results = collection.find(new BasicDBObject("content", Files.readString(Paths.get(path))));
+				System.out.println(results.one().get("content").toString());
+			} catch (IOException e) {
+				e.printStackTrace();
+			}
+
 		}
 
 		WIDTH = frame.getWidth();

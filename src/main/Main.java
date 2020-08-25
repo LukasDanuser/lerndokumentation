@@ -19,11 +19,12 @@ import com.mongodb.MongoClientURI;
 public class Main {
 
 	public static String role;
+	public static String username = "";
 
 	public static void main(String[] args) throws IOException {
 		Logger mongoLogger = Logger.getLogger("org.mongodb.driver");
 		mongoLogger.setLevel(Level.SEVERE);
-		@SuppressWarnings( "unused" )
+		@SuppressWarnings("unused")
 		MongoClientURI uri = new MongoClientURI(
 				"mongodb://lukas:secret.8@cluster0-shard-00-00.ez8ii.mongodb.net:27017,cluster0-shard-00-01.ez8ii.mongodb.net:27017,cluster0-shard-00-02.ez8ii.mongodb.net:27017/lerndokumentation?ssl=true&replicaSet=atlas-atekpy-shard-0&authSource=admin&retryWrites=true&w=majority");
 		@SuppressWarnings("resource")
@@ -38,7 +39,6 @@ public class Main {
 
 		DBCursor results = collection.find(new BasicDBObject("username", username2));
 
-		String username = "";
 		boolean usernameExists = false;
 
 		if (username2 == null) {
@@ -64,7 +64,7 @@ public class Main {
 						username2 = JOptionPane.showInputDialog(null, "Enter username", "Username does not exist!",
 								JOptionPane.INFORMATION_MESSAGE);
 						results = collection.find(new BasicDBObject("username", username2));
-						username = results.one().get("username").toString();						
+						username = results.one().get("username").toString();
 					} catch (NullPointerException e3) {
 						username = "";
 					}
@@ -116,7 +116,7 @@ public class Main {
 
 		int answer = JOptionPane.showConfirmDialog(null, "Create new file?", "", JOptionPane.YES_NO_CANCEL_OPTION,
 				JOptionPane.QUESTION_MESSAGE);
-		if (answer == 0) {
+		if (answer == JOptionPane.YES_OPTION) {
 			Frame.newFile = true;
 			Frame.fileName = JOptionPane.showInputDialog(null, "File name");
 			if (Frame.fileName.equals("")) {
@@ -145,7 +145,7 @@ public class Main {
 				System.out.println("New file created: " + newFilePath);
 				System.out.println("New File exits: " + Files.exists(newFilePath));
 			}
-		} else if (answer == 1) {
+		} else if (answer == JOptionPane.NO_OPTION) {
 			Frame.newFile = false;
 			Frame.fileName = JOptionPane.showInputDialog(null, "Enter file name", "Open file",
 					JOptionPane.DEFAULT_OPTION);
@@ -154,7 +154,7 @@ public class Main {
 			if (input == null) {
 				System.exit(1);
 			}
-		} else if (answer == 2) {
+		} else if (answer == JOptionPane.CANCEL_OPTION) {
 			System.exit(1);
 		}
 
