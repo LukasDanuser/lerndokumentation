@@ -445,10 +445,12 @@ public class Frame implements ActionListener {
 			collection = db.getCollection(Main.username);
 			DBObject file;
 			try {
+				DBCursor test = collection.find(new BasicDBObject("fileName", path));
 				file = new BasicDBObject("fileName", path).append("content", Files.readString(Paths.get(path)));
 				collection.insert(file);
-				DBCursor results = collection.find(new BasicDBObject("content", Files.readString(Paths.get(path))));
-				System.out.println(results.one().get("content").toString());
+				System.out.println(test.one().get("_id").toString());
+//				DBCursor results = collection.find(new BasicDBObject("content", Files.readString(Paths.get(path))));
+//				System.out.println(results.one().get("content").toString());
 			} catch (IOException e) {
 				e.printStackTrace();
 			}
