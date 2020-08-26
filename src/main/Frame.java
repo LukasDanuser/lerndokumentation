@@ -213,7 +213,7 @@ public class Frame implements ActionListener {
 
 	@Override
 	public void actionPerformed(ActionEvent event) {
-
+		boolean isNormal = true;
 		SimpleDateFormat formatter = new SimpleDateFormat("dd/MM/yyyy HH:mm");
 		Date date = new Date();
 
@@ -227,6 +227,8 @@ public class Frame implements ActionListener {
 		path = fileName + ".txt";
 
 		if (event.getSource() == buttenNewUser) {
+			collection = db.getCollection("users");
+
 			String username = "";
 			String[] options = { "Admin", "Default", "Cancel" };
 			int option = JOptionPane.showOptionDialog(null, "Role", "", JOptionPane.DEFAULT_OPTION,
@@ -242,84 +244,112 @@ public class Frame implements ActionListener {
 			}
 			if (option != 2) {
 				boolean isValid = false;
+				boolean unTaken = false;
+
 				username = JOptionPane.showInputDialog(null, "Enter username", "", JOptionPane.DEFAULT_OPTION);
-				if (username == null) {
-					isValid = true;
+
+				DBCursor results = collection.find(new BasicDBObject("username", username));
+				String usernameDB = "";
+				try {
+					usernameDB = results.one().get("username").toString();
+					if (username.equals(usernameDB)) {
+						unTaken = true;
+						while (unTaken == true) {
+							username = JOptionPane.showInputDialog(null, "Enter username", "Username taken!",
+									JOptionPane.DEFAULT_OPTION);
+							if (!username.equals(usernameDB)) {
+								unTaken = false;
+							}
+						}
+					}
+				} catch (NullPointerException e) {
+					isNormal = false;
+					usernameDB = "";
 				}
 
-				if (isValid == false && username.equals("")) {
-					isValid = false;
-					while (isValid == false) {
-						if (username == null) {
-							break;
-						}
-						username = JOptionPane.showInputDialog(null, "Enter username", "Invalid!",
-								JOptionPane.DEFAULT_OPTION);
-						if (username == null) {
-							break;
-						}
-						if (username.equals("")) {
+				if (isNormal) {
+					if (username == null) {
+						isValid = true;
+					}
+
+					if (isValid == false && username.equals("")) {
+						isValid = false;
+						while (isValid == false) {
+							if (username == null) {
+								break;
+							}
 							username = JOptionPane.showInputDialog(null, "Enter username", "Invalid!",
 									JOptionPane.DEFAULT_OPTION);
 							if (username == null) {
 								break;
 							}
-						}
+							if (username.equals("")) {
+								username = JOptionPane.showInputDialog(null, "Enter username", "Invalid!",
+										JOptionPane.DEFAULT_OPTION);
+								if (username == null) {
+									break;
+								}
+							}
 
-						if (!username.equals("")) {
-							isValid = true;
-						}
+							if (!username.equals("")) {
+								isValid = true;
+							}
 
+						}
+					} else {
+						isValid = true;
 					}
-				} else {
-					isValid = true;
-				}
-				String password = "";
-				if (username != null) {
-					password = JOptionPane.showInputDialog(null, "Enter new password", "", JOptionPane.DEFAULT_OPTION);
-				}
-
-				if (password == null) {
-					isValid = true;
-				}
-
-				if (isValid == false && password.equals("")) {
-					isValid = false;
-					while (isValid == false) {
-						if (password == null) {
-							break;
-						}
-						password = JOptionPane.showInputDialog(null, "Enter new password", "Invalid!",
+					String password = "";
+					if (username != null) {
+						password = JOptionPane.showInputDialog(null, "Enter new password", "",
 								JOptionPane.DEFAULT_OPTION);
-						if (password == null) {
-							break;
-						}
-						if (password.equals("")) {
+					}
+
+					if (password == null) {
+						isValid = true;
+					}
+
+					if (isValid == false && password.equals("")) {
+						isValid = false;
+						while (isValid == false) {
+							if (password == null) {
+								break;
+							}
 							password = JOptionPane.showInputDialog(null, "Enter new password", "Invalid!",
 									JOptionPane.DEFAULT_OPTION);
 							if (password == null) {
 								break;
 							}
-						}
+							if (password.equals("")) {
+								password = JOptionPane.showInputDialog(null, "Enter new password", "Invalid!",
+										JOptionPane.DEFAULT_OPTION);
+								if (password == null) {
+									break;
+								}
+							}
 
-						if (!password.equals("")) {
-							isValid = true;
-						}
+							if (!password.equals("")) {
+								isValid = true;
+							}
 
+						}
+					} else {
+						isValid = true;
 					}
-				} else {
-					isValid = true;
+
+					if (isValid && username != null && password != null) {
+						DBObject user = new BasicDBObject("username", username).append("password", password)
+								.append("role", role);
+						collection.insert(user);
+						JOptionPane.showMessageDialog(null, "User added", "New user", JOptionPane.INFORMATION_MESSAGE);
+					}
+
+					DBObject dbo = new BasicDBObject("", "");
+					db.createCollection(username, dbo);
+
 				}
 
-				if (isValid && username != null && password != null) {
-					DBObject user = new BasicDBObject("username", username).append("password", password).append("role",
-							role);
-					collection.insert(user);
-					JOptionPane.showMessageDialog(null, "User added", "New user", JOptionPane.INFORMATION_MESSAGE);
-				}
 			}
-			DBObject test = new BasicDBObject("", "");
-			db.createCollection(username, test);
 
 		}
 
@@ -445,13 +475,13 @@ public class Frame implements ActionListener {
 			collection = db.getCollection(Main.username);
 			DBObject file;
 			try {
+
 				DBCursor test = collection.find(new BasicDBObject("fileName", path));
 				file = new BasicDBObject("fileName", path).append("content", Files.readString(Paths.get(path)));
 				collection.insert(file);
 				System.out.println(test.one().get("_id").toString());
 //				DBCursor results = collection.find(new BasicDBObject("content", Files.readString(Paths.get(path))));
 //				System.out.println(results.one().get("content").toString());
-//				d
 			} catch (IOException e) {
 				e.printStackTrace();
 			}
