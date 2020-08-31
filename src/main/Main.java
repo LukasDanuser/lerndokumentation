@@ -30,8 +30,8 @@ public class Main {
 		MongoClientURI uri = new MongoClientURI(
 				"mongodb://lukas:secret.8@cluster0-shard-00-00.ez8ii.mongodb.net:27017,cluster0-shard-00-01.ez8ii.mongodb.net:27017,cluster0-shard-00-02.ez8ii.mongodb.net:27017/lerndokumentation?ssl=true&replicaSet=atlas-atekpy-shard-0&authSource=admin&retryWrites=true&w=majority");
 		@SuppressWarnings("resource")
-//		MongoClient client = new MongoClient("localhost", 27017);
-		MongoClient client = new MongoClient(uri);
+		MongoClient client = new MongoClient("localhost", 27017);
+//		MongoClient client = new MongoClient(uri);
 
 		@SuppressWarnings("deprecation")
 		DB db = client.getDB("lerndokumentation");
@@ -109,6 +109,7 @@ public class Main {
 		String password2 = JOptionPane.showInputDialog(null, "Enter password", "", JOptionPane.INFORMATION_MESSAGE);
 
 		if (isValidUsername == true) {
+//			String password = "";
 			String password = results.one().get("password").toString();
 
 			if (password2 == null) {
