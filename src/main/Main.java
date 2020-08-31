@@ -22,13 +22,16 @@ public class Main {
 	public static String username = "";
 
 	public static void main(String[] args) throws IOException {
+		boolean isValidUsername = false;
+		boolean isValidPassword = false;
 		Logger mongoLogger = Logger.getLogger("org.mongodb.driver");
 		mongoLogger.setLevel(Level.SEVERE);
 		@SuppressWarnings("unused")
 		MongoClientURI uri = new MongoClientURI(
 				"mongodb://lukas:secret.8@cluster0-shard-00-00.ez8ii.mongodb.net:27017,cluster0-shard-00-01.ez8ii.mongodb.net:27017,cluster0-shard-00-02.ez8ii.mongodb.net:27017/lerndokumentation?ssl=true&replicaSet=atlas-atekpy-shard-0&authSource=admin&retryWrites=true&w=majority");
 		@SuppressWarnings("resource")
-		MongoClient client = new MongoClient("localhost", 27017);
+//		MongoClient client = new MongoClient("localhost", 27017);
+		MongoClient client = new MongoClient(uri);
 
 		@SuppressWarnings("deprecation")
 		DB db = client.getDB("lerndokumentation");
@@ -50,66 +53,106 @@ public class Main {
 		} catch (NullPointerException e1) {
 			usernameExists = false;
 			while (usernameExists == false) {
+				if (username2 == null) {
+					System.exit(1);
+				}
 				try {
+					if (username2 == null) {
+						System.exit(1);
+					}
 					username2 = JOptionPane.showInputDialog(null, "Enter username", "Username does not exist!",
 							JOptionPane.INFORMATION_MESSAGE);
 					results = collection.find(new BasicDBObject("username", username2));
 					username = results.one().get("username").toString();
+					if (username != null && username != "" && username.equals(username2)) {
+						isValidUsername = true;
+						usernameExists = true;
+					}
 				} catch (NullPointerException e2) {
+					if (username2 == null) {
+						System.exit(1);
+					}
 					usernameExists = false;
 					username2 = JOptionPane.showInputDialog(null, "Enter username", "Username does not exist!",
 							JOptionPane.INFORMATION_MESSAGE);
 					results = collection.find(new BasicDBObject("username", username2));
 					try {
+						if (username2 == null) {
+							System.exit(1);
+						}
 						username2 = JOptionPane.showInputDialog(null, "Enter username", "Username does not exist!",
 								JOptionPane.INFORMATION_MESSAGE);
 						results = collection.find(new BasicDBObject("username", username2));
 						username = results.one().get("username").toString();
+						if (username != null && username != "" && username.equals(username2)) {
+							isValidUsername = true;
+							usernameExists = true;
+						}
 					} catch (NullPointerException e3) {
 						username = "";
+						if (username2 == null) {
+							System.exit(1);
+						}
 					}
-					if (username != null && username.equals(username2)) {
+					if (username != null && username != "" && username.equals(username2)) {
+						isValidUsername = true;
 						usernameExists = true;
 					}
 				}
 			}
 		}
+		usernameExists = true;
+		isValidUsername = true;
 
 		boolean isPasswordCorrect = false;
 
 		String password2 = JOptionPane.showInputDialog(null, "Enter password", "", JOptionPane.INFORMATION_MESSAGE);
-		String password = results.one().get("password").toString();
 
-		if (password2 == null) {
-			System.exit(1);
-		}
+		if (isValidUsername == true) {
+			String password = results.one().get("password").toString();
 
-		if (!password2.equals(password)) {
-			isPasswordCorrect = false;
-			while (isPasswordCorrect == false) {
-				password2 = JOptionPane.showInputDialog(null, "Enter password", "Invalid password!",
-						JOptionPane.INFORMATION_MESSAGE);
+			if (password2 == null) {
+				System.exit(1);
+			}
 
-				if (!password2.equals(password)) {
+			if (!password2.equals(password)) {
+				isPasswordCorrect = false;
+				while (isPasswordCorrect == false) {
 					password2 = JOptionPane.showInputDialog(null, "Enter password", "Invalid password!",
 							JOptionPane.INFORMATION_MESSAGE);
 
+					if (!password2.equals(password)) {
+						password2 = JOptionPane.showInputDialog(null, "Enter password", "Invalid password!",
+								JOptionPane.INFORMATION_MESSAGE);
+
+						if (password.equals(password2)) {
+							isPasswordCorrect = true;
+							isValidPassword = true;
+						}
+					}
+
 					if (password.equals(password2)) {
 						isPasswordCorrect = true;
+						isValidPassword = true;
 					}
+
+					if (password2 == null) {
+						System.exit(1);
+					}
+
 				}
 
-				if (password.equals(password2)) {
-					isPasswordCorrect = true;
-				}
-
-				if (password2 == null) {
-					System.exit(1);
-				}
-
+			} else if (password2.equals(password)) {
+				isValidPassword = true;
 			}
-
 		}
+
+		if (isValidPassword == false && isValidUsername == false) {
+			JOptionPane.showMessageDialog(null, "Username or password invalid!", "Login Error!",
+					JOptionPane.ERROR_MESSAGE);
+			System.exit(1);
+		}
+
 		role = results.one().get("role").toString();
 
 		collection = db.getCollection(username);
