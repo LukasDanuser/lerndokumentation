@@ -2,7 +2,6 @@ package main;
 
 import java.io.IOException;
 import java.nio.file.Files;
-import java.nio.file.Path;
 import java.nio.file.Paths;
 import java.util.logging.Level;
 import java.util.logging.Logger;
@@ -13,6 +12,7 @@ import com.mongodb.BasicDBObject;
 import com.mongodb.DB;
 import com.mongodb.DBCollection;
 import com.mongodb.DBCursor;
+import com.mongodb.DBObject;
 import com.mongodb.MongoClient;
 import com.mongodb.MongoClientURI;
 
@@ -106,10 +106,10 @@ public class Main {
 
 		boolean isPasswordCorrect = false;
 
-		String password2 = JOptionPane.showInputDialog(null, "Enter password", username, JOptionPane.INFORMATION_MESSAGE);
+		String password2 = JOptionPane.showInputDialog(null, "Enter password", username,
+				JOptionPane.INFORMATION_MESSAGE);
 
 		if (isValidUsername == true) {
-//			String password = "";
 			String password = results.one().get("password").toString();
 
 			if (password2 == null) {
@@ -185,14 +185,19 @@ public class Main {
 			if (input == null) {
 				System.exit(1);
 			}
-			if (Files.exists(Paths.get(Frame.fileName + ".txt")) == false) {
-				Frame.path = Frame.fileName + ".txt";
-				Path fileToCreatePath = Paths.get(Frame.path);
-				System.out.println("File to create path: " + fileToCreatePath);
-				Path newFilePath = Files.createFile(fileToCreatePath);
-				System.out.println("New file created: " + newFilePath);
-				System.out.println("New File exits: " + Files.exists(newFilePath));
+			DBObject file;
+			collection = db.getCollection(username);
+			DBCursor query = collection.find(new BasicDBObject("fileName", input ));
+			try {
+				@SuppressWarnings("unused")
+				String i = query.one().get("fileName").toString();
+				collection.remove(query.getQuery());
+			} catch (NullPointerException e) {
+
 			}
+
+			file = new BasicDBObject("fileName", input ).append("content", "");
+			collection.insert(file);
 		} else if (answer == JOptionPane.NO_OPTION) {
 			Frame.newFile = false;
 			Frame.fileName = JOptionPane.showInputDialog(null, "Enter file name", "Open file",
@@ -206,7 +211,7 @@ public class Main {
 			System.exit(1);
 		}
 
-		if (Frame.newFile == false && Files.exists(Paths.get(Frame.fileName + ".txt")) == false) {
+		if (Frame.newFile == false && Files.exists(Paths.get(Frame.fileName )) == false) {
 			boolean exists = false;
 			while (exists == false) {
 				Frame.fileName = JOptionPane.showInputDialog(null, "Enter file name", "File not found!",
@@ -218,7 +223,7 @@ public class Main {
 					System.exit(1);
 				}
 
-				if (Frame.newFile == false && Files.exists(Paths.get(Frame.fileName + ".txt")) == true) {
+				if (Frame.newFile == false && Files.exists(Paths.get(Frame.fileName )) == true) {
 					exists = true;
 				}
 			}

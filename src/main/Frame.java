@@ -5,7 +5,6 @@ import java.awt.event.*;
 import java.io.File;
 import java.io.IOException;
 import java.nio.file.Files;
-import java.nio.file.Path;
 import java.nio.file.Paths;
 import java.text.SimpleDateFormat;
 import java.util.Date;
@@ -49,7 +48,7 @@ public class Frame implements ActionListener {
 	JButton buttonDelete;
 	JButton buttonOpen;
 	JTextField textField;
-	JTextArea textArea;
+	static JTextArea textArea;
 
 	public Frame() throws IOException {
 
@@ -158,19 +157,16 @@ public class Frame implements ActionListener {
 		WIDTH = frame.getWidth();
 		HEIGHT = frame.getHeight();
 
-		path = fileName + ".txt";
+		path = fileName;
 		frame.setTitle(path);
+		collection = db.getCollection(Main.username);
+		DBCursor query = collection.find(new BasicDBObject("fileName", path));
+		textArea.setText(query.one().get("content").toString());
 
-		if (Files.exists(Paths.get(path)) == true) {
-			try {
-				textArea.setText(Files.readString(Paths.get(path)));
-			} catch (IOException e) {
-				e.printStackTrace();
-			}
-		}
 	}
 
 	public void changeFile() throws IOException {
+		DBCursor query = collection.find(new BasicDBObject("fileName", path));
 
 		newFile = false;
 		String fileName2 = fileName;
@@ -181,38 +177,55 @@ public class Frame implements ActionListener {
 			return;
 		}
 
-		if (newFile == false && Files.exists(Paths.get(fileName + ".txt")) == false) {
-			boolean exists = false;
-			while (exists == false) {
-				fileName = JOptionPane.showInputDialog(null, "Enter file name", "File not found!",
-						JOptionPane.WARNING_MESSAGE);
+		if (newFile == false) {
+			System.out.println(fileName + " =1");
+			System.out.println(fileName2 + " =2");
+			query = collection.find(new BasicDBObject("fileName", fileName));
+			try {
+				@SuppressWarnings("unused")
+				String i = query.one().get(fileName).toString();
+			} catch (NullPointerException e) {
+				boolean exists = false;
+				while (exists == false) {
+					fileName = JOptionPane.showInputDialog(null, "Enter file name", "File not found!",
+							JOptionPane.WARNING_MESSAGE);
 
-				if (newFile == false && Files.exists(Paths.get(fileName + ".txt")) == true) {
-					exists = true;
+					try {
+						@SuppressWarnings("unused")
+						String i = query.one().get(fileName).toString();
+						exists = true;
+					} catch (NullPointerException e1) {
 
+					}
 				}
 			}
+
 		}
-		path = fileName + ".txt";
+		path = fileName;
 		textArea.setText(Files.readString(Paths.get(path)));
 		frame.setTitle(path);
 	}
 
 	public void createNewFile(String name) throws IOException {
-		path = name + ".txt";
-		if (Files.exists(Paths.get(path)) == false) {
-			Path fileToCreatePath = Paths.get(path);
-			System.out.println("File to create path: " + fileToCreatePath);
-			Path newFilePath = Files.createFile(fileToCreatePath);
-			System.out.println("New file created: " + newFilePath);
-			System.out.println("New File exits: " + Files.exists(newFilePath));
-			textArea.setText(Files.readString(Paths.get(path)));
-			frame.setTitle(path);
+		path = name;
+		DBObject file;
+		collection = db.getCollection(Main.username);
+		DBCursor query = collection.find(new BasicDBObject("fileName", path));
+		try {
+			@SuppressWarnings("unused")
+			String i = query.one().get("fileName").toString();
+			collection.remove(query.getQuery());
+		} catch (NullPointerException e) {
+
 		}
+
+		file = new BasicDBObject("fileName", path).append("content", "");
+		collection.insert(file);
 	}
 
 	@Override
 	public void actionPerformed(ActionEvent event) {
+		DBCursor query = collection.find(new BasicDBObject("fileName", path));
 		boolean isNormal = true;
 		SimpleDateFormat formatter = new SimpleDateFormat("dd/MM/yyyy HH:mm");
 		Date date = new Date();
@@ -224,7 +237,7 @@ public class Frame implements ActionListener {
 		if (textField.getText().equals("")) {
 			isFieldEmpty = true;
 		}
-		path = fileName + ".txt";
+		path = fileName;
 
 		if (event.getSource() == buttenNewUser) {
 			collection = db.getCollection("users");
@@ -401,10 +414,9 @@ public class Frame implements ActionListener {
 			if (JOptionPane.showConfirmDialog(null, "This action can't be undo!\n Do you want to proceed",
 					"Delete file", JOptionPane.YES_NO_OPTION, JOptionPane.WARNING_MESSAGE) == JOptionPane.YES_OPTION) {
 				try {
-					Files.delete(Paths.get(path));
+					collection.remove(query.getQuery());
 					textArea.setText("");
 					collection = db.getCollection(Main.username);
-					DBCursor query = collection.find(new BasicDBObject("fileName", path));
 					try {
 						@SuppressWarnings("unused")
 						String i = query.one().get("fileName").toString();
@@ -444,7 +456,6 @@ public class Frame implements ActionListener {
 			}
 			DBObject file;
 			collection = db.getCollection(Main.username);
-			DBCursor query = collection.find(new BasicDBObject("fileName", path));
 			try {
 				@SuppressWarnings("unused")
 				String i = query.one().get("fileName").toString();
@@ -460,43 +471,37 @@ public class Frame implements ActionListener {
 
 		if (event.getSource() == textField) {
 
-			try {
-
-				createNewFile(fileName);
-
-				if (Files.size(Paths.get(path)) != 0) {
-					isFileEmpty = false;
-				} else {
-					isFileEmpty = true;
-				}
-
-				if (isFieldEmpty == true) {
-					if (isFileEmpty == true) {
-						Files.writeString(Paths.get(path), Files.readString(Paths.get(path)) + text);
-					} else {
-						Files.writeString(Paths.get(path), Files.readString(Paths.get(path)) + text);
-					}
-
-				} else if (isFieldEmpty == false) {
-					if (isFileEmpty == true) {
-						Files.writeString(Paths.get(path),
-								Files.readString(Paths.get(path)) + formatter.format(date) + ": " + text);
-					} else {
-						Files.writeString(Paths.get(path),
-								Files.readString(Paths.get(path)) + "\n\n" + formatter.format(date) + ": " + text);
-					}
-
-				}
-
-				textArea.setText(Files.readString(Paths.get(path)));
-				textField.setText("");
-
-			} catch (IOException e) {
-				e.printStackTrace();
+			if (!query.one().get("content").toString().equals("")) {
+				isFileEmpty = false;
+			} else {
+				isFileEmpty = true;
 			}
+
+			if (isFieldEmpty == true) {
+				query = collection.find(new BasicDBObject("fileName", path));
+				if (isFileEmpty == true) {
+
+					textArea.setText(textArea.getText() + text);
+				} else {
+
+					textArea.setText(textArea.getText() + text);
+				}
+
+			} else if (isFieldEmpty == false) {
+				if (isFileEmpty == true) {
+
+					textArea.setText(textArea.getText() + formatter.format(date) + ": " + text);
+				} else {
+
+					textArea.setText(textArea.getText() + "\n\n" + formatter.format(date) + ": " + text);
+
+				}
+
+			}
+
 			DBObject file;
 			collection = db.getCollection(Main.username);
-			DBCursor query = collection.find(new BasicDBObject("fileName", path));
+			query = collection.find(new BasicDBObject("fileName", path));
 			try {
 				@SuppressWarnings("unused")
 				String i = query.one().get("fileName").toString();
@@ -507,22 +512,27 @@ public class Frame implements ActionListener {
 
 			file = new BasicDBObject("fileName", path).append("content", textArea.getText());
 			collection.insert(file);
-//				DBCursor results = collection.find(new BasicDBObject("content", Files.readString(Paths.get(path))));
-//				System.out.println(results.one().get("content").toString());
+			textArea.setText(query.one().get("content").toString());
+			textField.setText("");
 
 		}
 
 		if (event.getSource() == buttonClear) {
 			if (JOptionPane.showConfirmDialog(null, "This action can't be undo!\n Do you want to proceed?",
 					"Clear file", JOptionPane.YES_NO_OPTION, JOptionPane.WARNING_MESSAGE) == JOptionPane.YES_OPTION) {
+				collection = db.getCollection(Main.username);
 				try {
-					Files.writeString(Paths.get(path), "");
-					textArea.setText(Files.readString(Paths.get(path)));
-				} catch (IOException e) {
-					e.printStackTrace();
-				}
-			}
+					@SuppressWarnings("unused")
+					String i = query.one().get("fileName").toString();
+					collection.remove(query.getQuery());
+				} catch (NullPointerException e) {
 
+				}
+				DBObject file;
+				file = new BasicDBObject("fileName", path).append("content", "");
+				collection.insert(file);
+			}
+			textArea.setText("");
 		}
 
 		if (event.getSource() == buttonSearch) {
@@ -545,25 +555,18 @@ public class Frame implements ActionListener {
 		}
 
 		if (event.getSource() == buttonRefresh) {
-			try {
 
-				WIDTH = frame.getWidth();
-				HEIGHT = frame.getHeight();
-				textArea.setSize(WIDTH - 50, HEIGHT - 100);
-				textArea.setText(Files.readString(Paths.get(path)));
-			} catch (IOException e) {
-				e.printStackTrace();
-			}
+			WIDTH = frame.getWidth();
+			HEIGHT = frame.getHeight();
+			textArea.setSize(WIDTH - 50, HEIGHT - 100);
+			textArea.setText(query.one().get("content").toString());
 
 			collection = db.getCollection(Main.username);
-			DBObject file;
 			try {
-				file = new BasicDBObject("fileName", path).append("content", Files.readString(Paths.get(path)));
-				collection.insert(file);
-				DBCursor results = collection.find(new BasicDBObject("content", Files.readString(Paths.get(path))));
-				System.out.println(results.one().get("content").toString());
-			} catch (IOException e) {
-				e.printStackTrace();
+				@SuppressWarnings("unused")
+				String i = query.one().get("fileName").toString();
+			} catch (NullPointerException e) {
+
 			}
 
 		}
@@ -576,7 +579,8 @@ public class Frame implements ActionListener {
 
 	@SuppressWarnings("resource")
 	public void Scanner(String string) throws IOException {
-		final Scanner scanner = new Scanner(Paths.get(path));
+		DBCursor query = collection.find(new BasicDBObject("fileName", path));
+		final Scanner scanner = new Scanner(query.one().get("content").toString());
 		int i = 0;
 		String[] results = new String[2000000];
 		while (scanner.hasNextLine()) {
