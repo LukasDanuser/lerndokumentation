@@ -403,6 +403,15 @@ public class Frame implements ActionListener {
 				try {
 					Files.delete(Paths.get(path));
 					textArea.setText("");
+					collection = db.getCollection(Main.username);
+					DBCursor query = collection.find(new BasicDBObject("fileName", path));
+					try {
+						@SuppressWarnings("unused")
+						String i = query.one().get("fileName").toString();
+						collection.remove(query.getQuery());
+					} catch (NullPointerException e) {
+
+					}
 					int input = JOptionPane.showConfirmDialog(null, "Create new file?", "",
 							JOptionPane.YES_NO_CANCEL_OPTION, JOptionPane.QUESTION_MESSAGE);
 					if (input == JOptionPane.YES_OPTION) {
@@ -433,6 +442,19 @@ public class Frame implements ActionListener {
 			} catch (IOException e) {
 				e.printStackTrace();
 			}
+			DBObject file;
+			collection = db.getCollection(Main.username);
+			DBCursor query = collection.find(new BasicDBObject("fileName", path));
+			try {
+				@SuppressWarnings("unused")
+				String i = query.one().get("fileName").toString();
+				collection.remove(query.getQuery());
+			} catch (NullPointerException e) {
+
+			}
+
+			file = new BasicDBObject("fileName", path).append("content", textArea.getText());
+			collection.insert(file);
 
 		}
 
@@ -472,19 +494,21 @@ public class Frame implements ActionListener {
 			} catch (IOException e) {
 				e.printStackTrace();
 			}
-			collection = db.getCollection(Main.username);
 			DBObject file;
+			collection = db.getCollection(Main.username);
+			DBCursor query = collection.find(new BasicDBObject("fileName", path));
 			try {
+				@SuppressWarnings("unused")
+				String i = query.one().get("fileName").toString();
+				collection.remove(query.getQuery());
+			} catch (NullPointerException e) {
 
-				DBCursor test = collection.find(new BasicDBObject("fileName", path));
-				file = new BasicDBObject("fileName", path).append("content", Files.readString(Paths.get(path)));
-				collection.insert(file);
-				System.out.println(test.one().get("_id").toString());
+			}
+
+			file = new BasicDBObject("fileName", path).append("content", textArea.getText());
+			collection.insert(file);
 //				DBCursor results = collection.find(new BasicDBObject("content", Files.readString(Paths.get(path))));
 //				System.out.println(results.one().get("content").toString());
-			} catch (IOException e) {
-				e.printStackTrace();
-			}
 
 		}
 

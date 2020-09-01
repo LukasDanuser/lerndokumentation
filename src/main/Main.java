@@ -106,7 +106,7 @@ public class Main {
 
 		boolean isPasswordCorrect = false;
 
-		String password2 = JOptionPane.showInputDialog(null, "Enter password", "", JOptionPane.INFORMATION_MESSAGE);
+		String password2 = JOptionPane.showInputDialog(null, "Enter password", username, JOptionPane.INFORMATION_MESSAGE);
 
 		if (isValidUsername == true) {
 //			String password = "";
@@ -119,13 +119,17 @@ public class Main {
 			if (!password2.equals(password)) {
 				isPasswordCorrect = false;
 				while (isPasswordCorrect == false) {
-					password2 = JOptionPane.showInputDialog(null, "Enter password", "Invalid password!",
+					password2 = JOptionPane.showInputDialog(null, "Invalid password!", username,
 							JOptionPane.INFORMATION_MESSAGE);
-
+					if (password2 == null) {
+						System.exit(1);
+					}
 					if (!password2.equals(password)) {
-						password2 = JOptionPane.showInputDialog(null, "Enter password", "Invalid password!",
+						password2 = JOptionPane.showInputDialog(null, "Invalid password!", username,
 								JOptionPane.INFORMATION_MESSAGE);
-
+						if (password2 == null) {
+							System.exit(1);
+						}
 						if (password.equals(password2)) {
 							isPasswordCorrect = true;
 							isValidPassword = true;
