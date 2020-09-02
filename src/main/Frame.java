@@ -2,10 +2,7 @@ package main;
 
 import java.awt.*;
 import java.awt.event.*;
-import java.io.File;
 import java.io.IOException;
-import java.nio.file.Files;
-import java.nio.file.Paths;
 import java.text.SimpleDateFormat;
 import java.util.Date;
 import java.util.Scanner;
@@ -47,7 +44,6 @@ public class Frame implements ActionListener {
 	JButton buttonSearch;
 	JButton buttonChangeFile;
 	JButton buttonDelete;
-	JButton buttonOpen;
 	JTextField textField;
 	static JTextArea textArea;
 
@@ -119,15 +115,6 @@ public class Frame implements ActionListener {
 		buttonChangeFile.setBorder(BorderFactory.createEtchedBorder());
 		buttonChangeFile.setFocusable(false);
 
-		buttonOpen = new JButton("Open path");
-		buttonOpen.setBounds(150, 50, 120, 60);
-		buttonOpen.addActionListener(this);
-		buttonOpen.setBackground(new Color(125, 125, 125));
-		buttonOpen.setFont(new Font("Comic Sans", Font.ITALIC, 15));
-		buttonOpen.setForeground(new Color(250, 250, 250));
-		buttonOpen.setBorder(BorderFactory.createEtchedBorder());
-		buttonOpen.setFocusable(false);
-
 		buttonDelete = new JButton("Delete file");
 		buttonDelete.setBounds(150, 50, 120, 60);
 		buttonDelete.addActionListener(this);
@@ -149,7 +136,6 @@ public class Frame implements ActionListener {
 		frame.add(buttonRefresh);
 		frame.add(buttonSearch);
 		frame.add(buttonChangeFile);
-		frame.add(buttonOpen);
 		frame.add(buttonDelete);
 		frame.add(textField);
 		frame.add(textArea);
@@ -236,7 +222,6 @@ public class Frame implements ActionListener {
 		Date date = new Date();
 
 		String text = textField.getText();
-		String text2 = textArea.getText();
 		boolean isFieldEmpty = false;
 		boolean isFileEmpty = false;
 		if (textField.getText().equals("")) {
@@ -371,27 +356,6 @@ public class Frame implements ActionListener {
 
 		}
 
-		if (event.getSource() == buttonOpen) {
-			String[] options = { "File", "Directory" };
-			int i = JOptionPane.showOptionDialog(null, "Open file or directory?", "", JOptionPane.DEFAULT_OPTION,
-					JOptionPane.QUESTION_MESSAGE, null, options, options[0]);
-			if (i == 0) {
-				String absolutePath = Paths.get(path).toAbsolutePath().toString();
-				try {
-					Desktop.getDesktop().open(new File(absolutePath));
-				} catch (IOException e) {
-					e.printStackTrace();
-				}
-			} else {
-				String absolutePath = Paths.get(path).toAbsolutePath().getParent().toString();
-				try {
-					Desktop.getDesktop().open(new File(absolutePath));
-				} catch (IOException e) {
-					e.printStackTrace();
-				}
-			}
-		}
-
 		if (event.getSource() == buttonChangeFile) {
 			try {
 				if (JOptionPane.showConfirmDialog(null, "Create new file?", "", JOptionPane.YES_NO_OPTION,
@@ -454,12 +418,6 @@ public class Frame implements ActionListener {
 		}
 
 		if (event.getSource() == buttonSave) {
-			try {
-				Files.writeString(Paths.get(path), text2);
-				textArea.setText(Files.readString(Paths.get(path)));
-			} catch (IOException e) {
-				e.printStackTrace();
-			}
 			DBObject file;
 			collection = db.getCollection(Main.username);
 			try {
@@ -537,8 +495,8 @@ public class Frame implements ActionListener {
 				DBObject file;
 				file = new BasicDBObject("fileName", path).append("content", "");
 				collection.insert(file);
+				textArea.setText("");
 			}
-			textArea.setText("");
 		}
 
 		if (event.getSource() == buttonSearch) {
