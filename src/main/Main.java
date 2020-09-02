@@ -1,8 +1,6 @@
 package main;
 
 import java.io.IOException;
-import java.nio.file.Files;
-import java.nio.file.Paths;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 
@@ -30,8 +28,8 @@ public class Main {
 		MongoClientURI uri = new MongoClientURI(
 				"mongodb://lukas:secret.8@cluster0-shard-00-00.ez8ii.mongodb.net:27017,cluster0-shard-00-01.ez8ii.mongodb.net:27017,cluster0-shard-00-02.ez8ii.mongodb.net:27017/lerndokumentation?ssl=true&replicaSet=atlas-atekpy-shard-0&authSource=admin&retryWrites=true&w=majority");
 		@SuppressWarnings("resource")
-		MongoClient client = new MongoClient("localhost", 27017);
-//		MongoClient client = new MongoClient(uri);
+//		MongoClient client = new MongoClient("localhost", 27017);
+		MongoClient client = new MongoClient(uri);
 
 		@SuppressWarnings("deprecation")
 		DB db = client.getDB("lerndokumentation");
@@ -187,46 +185,55 @@ public class Main {
 			}
 			DBObject file;
 			collection = db.getCollection(username);
-			DBCursor query = collection.find(new BasicDBObject("fileName", input ));
+			DBCursor query = collection.find(new BasicDBObject("fileName", input));
 			try {
 				@SuppressWarnings("unused")
 				String i = query.one().get("fileName").toString();
-				collection.remove(query.getQuery());
 			} catch (NullPointerException e) {
-
+				file = new BasicDBObject("fileName", input).append("content", "");
+				collection.insert(file);
 			}
 
-			file = new BasicDBObject("fileName", input ).append("content", "");
-			collection.insert(file);
 		} else if (answer == JOptionPane.NO_OPTION) {
 			Frame.newFile = false;
 			Frame.fileName = JOptionPane.showInputDialog(null, "Enter file name", "Open file",
 					JOptionPane.DEFAULT_OPTION);
 			String input = Frame.fileName;
+			DBCursor query = collection.find(new BasicDBObject("fileName", input));
+			try {
+				@SuppressWarnings("unused")
+				String i = query.one().get("content").toString();
+				Frame.path = Frame.fileName;
+			} catch (NullPointerException e) {
+				boolean exists = false;
+				while (exists == false) {
+					input = Frame.fileName;
+					if (input == null) {
+						System.exit(1);
+					}
+					Frame.fileName = JOptionPane.showInputDialog(null, "Enter file name", "File not found!",
+							JOptionPane.WARNING_MESSAGE);
+					input = Frame.fileName;
+					if (input == null) {
+						System.exit(1);
+					}
+					query = collection.find(new BasicDBObject("fileName", input));
 
+					try {
+						@SuppressWarnings("unused")
+						String i = query.one().get("content").toString();
+						Frame.path = input;
+						exists = true;
+					} catch (NullPointerException e1) {
+
+					}
+				}
+			}
 			if (input == null) {
 				System.exit(1);
 			}
 		} else if (answer == JOptionPane.CANCEL_OPTION) {
 			System.exit(1);
-		}
-
-		if (Frame.newFile == false && Files.exists(Paths.get(Frame.fileName )) == false) {
-			boolean exists = false;
-			while (exists == false) {
-				Frame.fileName = JOptionPane.showInputDialog(null, "Enter file name", "File not found!",
-						JOptionPane.WARNING_MESSAGE);
-
-				String input = Frame.fileName;
-
-				if (input == null) {
-					System.exit(1);
-				}
-
-				if (Frame.newFile == false && Files.exists(Paths.get(Frame.fileName )) == true) {
-					exists = true;
-				}
-			}
 		}
 
 		@SuppressWarnings("unused")

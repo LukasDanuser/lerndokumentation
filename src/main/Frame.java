@@ -26,7 +26,8 @@ public class Frame implements ActionListener {
 
 	MongoClientURI uri = new MongoClientURI(
 			"mongodb://lukas:secret.8@cluster0-shard-00-00.ez8ii.mongodb.net:27017,cluster0-shard-00-01.ez8ii.mongodb.net:27017,cluster0-shard-00-02.ez8ii.mongodb.net:27017/lerndokumentation?ssl=true&replicaSet=atlas-atekpy-shard-0&authSource=admin&retryWrites=true&w=majority");
-	MongoClient client = new MongoClient("localhost", 27017);
+//	MongoClient client = new MongoClient("localhost", 27017);
+	MongoClient client = new MongoClient(uri);
 	@SuppressWarnings("deprecation")
 	DB db = client.getDB("lerndokumentation");
 	DBCollection collection = db.getCollection("users");
@@ -178,12 +179,14 @@ public class Frame implements ActionListener {
 		}
 
 		if (newFile == false) {
-			System.out.println(fileName + " =1");
-			System.out.println(fileName2 + " =2");
+
 			query = collection.find(new BasicDBObject("fileName", fileName));
 			try {
 				@SuppressWarnings("unused")
-				String i = query.one().get(fileName).toString();
+				String i = query.one().get("content").toString();
+				path = fileName;
+				textArea.setText(query.one().get("content").toString());
+				frame.setTitle(fileName);
 			} catch (NullPointerException e) {
 				boolean exists = false;
 				while (exists == false) {
@@ -202,7 +205,7 @@ public class Frame implements ActionListener {
 
 		}
 		path = fileName;
-		textArea.setText(Files.readString(Paths.get(path)));
+		textArea.setText(query.one().get("content").toString());
 		frame.setTitle(path);
 	}
 
@@ -221,6 +224,8 @@ public class Frame implements ActionListener {
 
 		file = new BasicDBObject("fileName", path).append("content", "");
 		collection.insert(file);
+		textArea.setText(query.one().get("content").toString());
+		frame.setTitle(fileName);
 	}
 
 	@Override
@@ -402,6 +407,7 @@ public class Frame implements ActionListener {
 					}
 
 				} else {
+					newFile = false;
 					changeFile();
 				}
 
