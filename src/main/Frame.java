@@ -23,8 +23,8 @@ public class Frame implements ActionListener {
 
 	MongoClientURI uri = new MongoClientURI(
 			"mongodb://lukas:secret.8@cluster0-shard-00-00.ez8ii.mongodb.net:27017,cluster0-shard-00-01.ez8ii.mongodb.net:27017,cluster0-shard-00-02.ez8ii.mongodb.net:27017/lerndokumentation?ssl=true&replicaSet=atlas-atekpy-shard-0&authSource=admin&retryWrites=true&w=majority");
-//	MongoClient client = new MongoClient("localhost", 27017);
-	MongoClient client = new MongoClient(uri);
+	MongoClient client = new MongoClient("localhost", 27017);
+//	MongoClient client = new MongoClient(uri);
 	@SuppressWarnings("deprecation")
 	DB db = client.getDB("lerndokumentation");
 	DBCollection collection = db.getCollection("users");
@@ -32,14 +32,19 @@ public class Frame implements ActionListener {
 	public static boolean newFile;
 	public static String fileName;
 	public static String path;
+	
+	Dimension screenSize = Toolkit.getDefaultToolkit().getScreenSize();
 
-	int WIDTH = 700;
-	int HEIGHT = 700;
+	private String hashedPassword = "";
+
+	int WIDTH = (int) screenSize.getWidth();
+	int HEIGHT = (int) screenSize.getHeight();
 
 	public static JFrame frame;
 	JButton buttonSave;
 	JButton buttonClear;
 	JButton buttenNewUser;
+	JButton buttenRemoveUser;
 	JButton buttonRefresh;
 	JButton buttonSearch;
 	JButton buttonChangeFile;
@@ -78,6 +83,15 @@ public class Frame implements ActionListener {
 		buttenNewUser.setForeground(new Color(250, 250, 250));
 		buttenNewUser.setBorder(BorderFactory.createEtchedBorder());
 		buttenNewUser.setFocusable(false);
+
+		buttenRemoveUser = new JButton("Remove User");
+		buttenRemoveUser.setBounds(150, 50, 120, 60);
+		buttenRemoveUser.addActionListener(this);
+		buttenRemoveUser.setBackground(new Color(125, 125, 125));
+		buttenRemoveUser.setFont(new Font("Comic Sans", Font.ITALIC, 15));
+		buttenRemoveUser.setForeground(new Color(250, 250, 250));
+		buttenRemoveUser.setBorder(BorderFactory.createEtchedBorder());
+		buttenRemoveUser.setFocusable(false);
 
 		buttonClear = new JButton("Clear File");
 		buttonClear.setBounds(150, 50, 120, 60);
@@ -125,12 +139,13 @@ public class Frame implements ActionListener {
 		buttonDelete.setFocusable(false);
 
 		frame = new JFrame(path);
-		frame.setSize(new Dimension(700, 700));
+		frame.setSize(new Dimension(WIDTH, HEIGHT));
 		frame.setLayout(new FlowLayout());
 		frame.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
 		frame.add(buttonSave);
 		if (Main.role.equals("admin")) {
 			frame.add(buttenNewUser);
+			frame.add(buttenRemoveUser);
 		}
 		frame.add(buttonClear);
 		frame.add(buttonRefresh);
@@ -214,13 +229,21 @@ public class Frame implements ActionListener {
 		frame.setTitle(fileName);
 	}
 
+	@SuppressWarnings("resource")
 	@Override
 	public void actionPerformed(ActionEvent event) {
+		String userNameValue = "";
+		String passwordValue = "";
+		String pwConfirmValue = "";
+		String adminPasswordValue = "";
+
+		boolean isValidLogin = false;
+
 		DBCursor query = collection.find(new BasicDBObject("fileName", path));
-		boolean isNormal = true;
 		SimpleDateFormat formatter = new SimpleDateFormat("dd/MM/yyyy HH:mm");
 		Date date = new Date();
 
+		DBCursor results = collection.find(new BasicDBObject("username", userNameValue));
 		String text = textField.getText();
 		boolean isFieldEmpty = false;
 		boolean isFileEmpty = false;
@@ -229,10 +252,92 @@ public class Frame implements ActionListener {
 		}
 		path = fileName;
 
+		if (event.getSource() == buttenRemoveUser) {
+			boolean userExists = true;
+			boolean adminPwValid = true;
+			collection = db.getCollection("users");
+
+			JLabel jUserName = new JLabel("Enter the name of the user you want to remove");
+			JTextField userName = new JTextField();
+			JLabel jAdminPassword = new JLabel("Enter admin password");
+			JTextField adminPassword = new JPasswordField();
+			Object[] ob = { jUserName, userName, jAdminPassword, adminPassword };
+			userName.setText("");
+			adminPassword.setText("");
+			int resultLogin = JOptionPane.showConfirmDialog(null, ob, "Remove user. This action can't be undo!",
+					JOptionPane.OK_CANCEL_OPTION);
+			if (resultLogin == JOptionPane.OK_OPTION) {
+				userNameValue = userName.getText();
+				adminPasswordValue = adminPassword.getText();
+				query = collection.find(new BasicDBObject("username", userNameValue));
+				if (!Main.checkPassword(adminPasswordValue, Main.adminPw) && !Main.adminPw.equals("")) {
+					adminPwValid = false;
+				}
+				try {
+					@SuppressWarnings("unused")
+					String i = query.one().get("username").toString();
+					userExists = true;
+				} catch (NullPointerException e) {
+					userExists = false;
+				}
+
+				while (adminPwValid == false | userExists == false) {
+					try {
+						@SuppressWarnings("unused")
+						String i = query.one().get("username").toString();
+						userExists = true;
+					} catch (NullPointerException e) {
+						userName.setText("");
+						adminPassword.setText("");
+						resultLogin = JOptionPane.showConfirmDialog(null, ob, "Invalid data!",
+								JOptionPane.OK_CANCEL_OPTION);
+						if (resultLogin == JOptionPane.OK_OPTION) {
+							userNameValue = userName.getText();
+							adminPasswordValue = adminPassword.getText();
+							try {
+								@SuppressWarnings("unused")
+								String i = query.one().get("username").toString();
+								userExists = true;
+								if (Main.checkPassword(adminPasswordValue, Main.adminPw)
+										&& !adminPasswordValue.equals("")) {
+									adminPwValid = true;
+
+								}
+							} catch (NullPointerException e1) {
+
+							}
+						} else {
+							break;
+						}
+					}
+					if (Main.checkPassword(adminPasswordValue, Main.adminPw) && !adminPasswordValue.equals("")) {
+						adminPwValid = true;
+
+					}
+					try {
+						query = collection.find(new BasicDBObject("username", userNameValue));
+						@SuppressWarnings("unused")
+						String i = query.one().get("username").toString();
+						userExists = true;
+					} catch (NullPointerException e) {
+
+					}
+				}
+
+				if (adminPwValid == true && userExists == true) {
+					query = collection.find(new BasicDBObject("username", userNameValue));
+					collection.remove(query.getQuery());
+					collection = db.getCollection(userNameValue);
+					collection.drop();
+					JOptionPane.showMessageDialog(null, "User removed", "", JOptionPane.INFORMATION_MESSAGE);
+				}
+
+			}
+		}
+
 		if (event.getSource() == buttenNewUser) {
 			collection = db.getCollection("users");
 
-			String username = "";
 			String[] options = { "Admin", "Default", "Cancel" };
 			int option = JOptionPane.showOptionDialog(null, "Role", "", JOptionPane.DEFAULT_OPTION,
 					JOptionPane.INFORMATION_MESSAGE, null, options, options[0]);
@@ -246,109 +351,138 @@ public class Frame implements ActionListener {
 
 			}
 			if (option != 2) {
-				boolean isValid = false;
-				boolean unTaken = false;
+				boolean validPassword = true;
+				boolean validUsername = true;
+				JLabel jUserName = new JLabel("User Name");
+				JTextField userName = new JTextField();
+				JLabel jPassword = new JLabel("Password");
+				JTextField password1 = new JPasswordField();
+				JLabel jPasswordConfirm = new JLabel("Confirm password");
+				JTextField passwordConfirm = new JPasswordField();
+				Object[] ob = { jUserName, userName, jPassword, password1, jPasswordConfirm, passwordConfirm };
+				int resultLogin = JOptionPane.showConfirmDialog(null, ob, "Login", JOptionPane.OK_CANCEL_OPTION);
 
-				username = JOptionPane.showInputDialog(null, "Enter username", "", JOptionPane.DEFAULT_OPTION);
+				collection = db.getCollection("users");
+				@SuppressWarnings("unused")
+				String user1 = "";
+				if (resultLogin == JOptionPane.OK_OPTION) {
+					boolean proceed = true;
+					userNameValue = userName.getText();
+					passwordValue = password1.getText();
+					pwConfirmValue = passwordConfirm.getText();
+					results = collection.find(new BasicDBObject("username", userNameValue));
 
-				DBCursor results = collection.find(new BasicDBObject("username", username));
-				String usernameDB = "";
-				try {
-					usernameDB = results.one().get("username").toString();
-					if (username.equals(usernameDB)) {
-						unTaken = true;
-						while (unTaken == true) {
-							username = JOptionPane.showInputDialog(null, "Enter username", "Username taken!",
-									JOptionPane.DEFAULT_OPTION);
-							if (!username.equals(usernameDB)) {
-								unTaken = false;
+					try {
+						user1 = results.one().get("username").toString();
+						validUsername = false;
+						if (userNameValue.equals("")) {
+							validUsername = false;
+						}
+						while (validUsername == false) {
+							userName.setText("");
+							password1.setText("");
+							passwordConfirm.setText("");
+							results = collection.find(new BasicDBObject("username", userNameValue));
+							resultLogin = JOptionPane.showConfirmDialog(null, ob, "Username already exists!",
+									JOptionPane.OK_CANCEL_OPTION);
+							if (resultLogin == JOptionPane.OK_OPTION) {
+								userNameValue = userName.getText();
+								passwordValue = password1.getText();
+								pwConfirmValue = passwordConfirm.getText();
+							} else {
+								isValidLogin = false;
+								proceed = false;
+								break;
+							}
+							results = collection.find(new BasicDBObject("username", userNameValue));
+							try {
+								user1 = results.one().get("username").toString();
+								validUsername = false;
+							} catch (NullPointerException e1) {
+								validUsername = true;
+								isValidLogin = true;
 							}
 						}
-					}
-				} catch (NullPointerException e) {
-					isNormal = false;
-					usernameDB = "";
-				}
 
-				if (isNormal) {
-					if (username == null) {
-						isValid = true;
-					}
-
-					if (isValid == false && username.equals("")) {
-						isValid = false;
-						while (isValid == false) {
-							if (username == null) {
-								break;
-							}
-							username = JOptionPane.showInputDialog(null, "Enter username", "Invalid!",
-									JOptionPane.DEFAULT_OPTION);
-							if (username == null) {
-								break;
-							}
-							if (username.equals("")) {
-								username = JOptionPane.showInputDialog(null, "Enter username", "Invalid!",
-										JOptionPane.DEFAULT_OPTION);
-								if (username == null) {
+					} catch (NullPointerException e) {
+						if (userNameValue.equals("")) {
+							validUsername = false;
+							while (validUsername == false) {
+								userName.setText("");
+								password1.setText("");
+								passwordConfirm.setText("");
+								results = collection.find(new BasicDBObject("username", userNameValue));
+								resultLogin = JOptionPane.showConfirmDialog(null, ob, "Username can't be empty!",
+										JOptionPane.OK_CANCEL_OPTION);
+								if (resultLogin == JOptionPane.OK_OPTION) {
+									userNameValue = userName.getText();
+									passwordValue = password1.getText();
+									pwConfirmValue = passwordConfirm.getText();
+								} else {
+									isValidLogin = false;
+									proceed = false;
 									break;
 								}
-							}
-
-							if (!username.equals("")) {
-								isValid = true;
-							}
-
-						}
-					} else {
-						isValid = true;
-					}
-					String password = "";
-					if (username != null) {
-						password = JOptionPane.showInputDialog(null, "Enter new password", "",
-								JOptionPane.DEFAULT_OPTION);
-					}
-
-					if (password == null) {
-						isValid = true;
-					}
-
-					if (isValid == false && password.equals("")) {
-						isValid = false;
-						while (isValid == false) {
-							if (password == null) {
-								break;
-							}
-							password = JOptionPane.showInputDialog(null, "Enter new password", "Invalid!",
-									JOptionPane.DEFAULT_OPTION);
-							if (password == null) {
-								break;
-							}
-							if (password.equals("")) {
-								password = JOptionPane.showInputDialog(null, "Enter new password", "Invalid!",
-										JOptionPane.DEFAULT_OPTION);
-								if (password == null) {
-									break;
+								results = collection.find(new BasicDBObject("username", userNameValue));
+								try {
+									user1 = results.one().get("username").toString();
+									validUsername = false;
+								} catch (NullPointerException e1) {
+									validUsername = true;
+									isValidLogin = true;
+									if (userNameValue.equals("")) {
+										validUsername = false;
+										isValidLogin = false;
+									}
 								}
 							}
-
-							if (!password.equals("")) {
-								isValid = true;
+						} else {
+							validUsername = true;
+						}
+					}
+					if (!passwordValue.equals(pwConfirmValue) | passwordValue.equals("")) {
+						validPassword = false;
+						while (validPassword == false) {
+							if (proceed == false) {
+								break;
 							}
-
+							password1.setText("");
+							passwordConfirm.setText("");
+							resultLogin = JOptionPane.showConfirmDialog(null, ob, "Password confirmation incorrect!",
+									JOptionPane.OK_CANCEL_OPTION);
+							if (resultLogin == JOptionPane.OK_OPTION) {
+								userNameValue = userName.getText();
+								passwordValue = password1.getText();
+								pwConfirmValue = passwordConfirm.getText();
+							} else {
+								break;
+							}
+							if (passwordValue.equals(pwConfirmValue) && !passwordValue.equals("")) {
+								validPassword = true;
+								isValidLogin = true;
+							}
 						}
 					} else {
-						isValid = true;
-					}
+						if (proceed == true) {
+							if (!passwordValue.equals("")) {
+								validPassword = true;
+								isValidLogin = true;
 
-					if (isValid && username != null && password != null) {
-						DBObject user = new BasicDBObject("username", username).append("password", password)
+							}
+						}
+					}
+					if (isValidLogin && userNameValue != null && passwordValue != null) {
+						hashedPassword = org.mindrot.jbcrypt.BCrypt.hashpw(passwordValue,
+								org.mindrot.jbcrypt.BCrypt.gensalt(10));
+
+						DBObject user = new BasicDBObject("username", userNameValue).append("password", hashedPassword)
 								.append("role", role);
 						collection.insert(user);
 						JOptionPane.showMessageDialog(null, "User added", "New user", JOptionPane.INFORMATION_MESSAGE);
+						DBObject dbo = new BasicDBObject("", "");
+						db.createCollection(userNameValue, dbo);
 					}
-
-					DBObject dbo = new BasicDBObject("", "");
-					db.createCollection(username, dbo);
+				} else {
 
 				}
 

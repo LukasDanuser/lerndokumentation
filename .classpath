@@ -16,5 +16,7 @@
 	<classpathentry kind="lib" path="/home/lukasd/Java-MongoDB/mongodb-driver-core-3.0.4-javadoc.jar"/>
 	<classpathentry kind="lib" path="/home/lukasd/Java-MongoDB/mongodb-driver-core-3.0.4-sources.jar"/>
 	<classpathentry kind="lib" path="/home/lukasd/Java-MongoDB/mongo-java-driver-3.12.6.jar"/>
+	<classpathentry kind="lib" path="/home/lukasd/spring-security-config-3.0.5.release.jar"/>
+	<classpathentry kind="lib" path="/home/lukasd/jbcrypt-0.3m.jar"/>
 	<classpathentry kind="output" path="bin"/>
 </classpath>
