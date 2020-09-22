@@ -32,7 +32,7 @@ public class Frame implements ActionListener {
 	public static boolean newFile;
 	public static String fileName;
 	public static String path;
-	
+
 	Dimension screenSize = Toolkit.getDefaultToolkit().getScreenSize();
 
 	private String hashedPassword = "";
@@ -264,7 +264,7 @@ public class Frame implements ActionListener {
 			Object[] ob = { jUserName, userName, jAdminPassword, adminPassword };
 			userName.setText("");
 			adminPassword.setText("");
-			int resultLogin = JOptionPane.showConfirmDialog(null, ob, "Remove user. This action can't be undo!",
+			byte resultLogin = (byte) JOptionPane.showConfirmDialog(null, ob, "Remove user. This action can't be undo!",
 					JOptionPane.OK_CANCEL_OPTION);
 			if (resultLogin == JOptionPane.OK_OPTION) {
 				userNameValue = userName.getText();
@@ -289,7 +289,7 @@ public class Frame implements ActionListener {
 					} catch (NullPointerException e) {
 						userName.setText("");
 						adminPassword.setText("");
-						resultLogin = JOptionPane.showConfirmDialog(null, ob, "Invalid data!",
+						resultLogin = (byte) JOptionPane.showConfirmDialog(null, ob, "Invalid data!",
 								JOptionPane.OK_CANCEL_OPTION);
 						if (resultLogin == JOptionPane.OK_OPTION) {
 							userNameValue = userName.getText();
@@ -339,7 +339,7 @@ public class Frame implements ActionListener {
 			collection = db.getCollection("users");
 
 			String[] options = { "Admin", "Default", "Cancel" };
-			int option = JOptionPane.showOptionDialog(null, "Role", "", JOptionPane.DEFAULT_OPTION,
+			byte option = (byte) JOptionPane.showOptionDialog(null, "Role", "", JOptionPane.DEFAULT_OPTION,
 					JOptionPane.INFORMATION_MESSAGE, null, options, options[0]);
 			String role = "";
 
@@ -360,7 +360,7 @@ public class Frame implements ActionListener {
 				JLabel jPasswordConfirm = new JLabel("Confirm password");
 				JTextField passwordConfirm = new JPasswordField();
 				Object[] ob = { jUserName, userName, jPassword, password1, jPasswordConfirm, passwordConfirm };
-				int resultLogin = JOptionPane.showConfirmDialog(null, ob, "Login", JOptionPane.OK_CANCEL_OPTION);
+				byte resultLogin = (byte) JOptionPane.showConfirmDialog(null, ob, "Login", JOptionPane.OK_CANCEL_OPTION);
 
 				collection = db.getCollection("users");
 				@SuppressWarnings("unused")
@@ -383,7 +383,7 @@ public class Frame implements ActionListener {
 							password1.setText("");
 							passwordConfirm.setText("");
 							results = collection.find(new BasicDBObject("username", userNameValue));
-							resultLogin = JOptionPane.showConfirmDialog(null, ob, "Username already exists!",
+							resultLogin = (byte) JOptionPane.showConfirmDialog(null, ob, "Username already exists!",
 									JOptionPane.OK_CANCEL_OPTION);
 							if (resultLogin == JOptionPane.OK_OPTION) {
 								userNameValue = userName.getText();
@@ -412,7 +412,7 @@ public class Frame implements ActionListener {
 								password1.setText("");
 								passwordConfirm.setText("");
 								results = collection.find(new BasicDBObject("username", userNameValue));
-								resultLogin = JOptionPane.showConfirmDialog(null, ob, "Username can't be empty!",
+								resultLogin = (byte) JOptionPane.showConfirmDialog(null, ob, "Username can't be empty!",
 										JOptionPane.OK_CANCEL_OPTION);
 								if (resultLogin == JOptionPane.OK_OPTION) {
 									userNameValue = userName.getText();
@@ -448,7 +448,7 @@ public class Frame implements ActionListener {
 							}
 							password1.setText("");
 							passwordConfirm.setText("");
-							resultLogin = JOptionPane.showConfirmDialog(null, ob, "Password confirmation incorrect!",
+							resultLogin = (byte) JOptionPane.showConfirmDialog(null, ob, "Password confirmation incorrect!",
 									JOptionPane.OK_CANCEL_OPTION);
 							if (resultLogin == JOptionPane.OK_OPTION) {
 								userNameValue = userName.getText();
@@ -528,7 +528,7 @@ public class Frame implements ActionListener {
 					} catch (NullPointerException e) {
 
 					}
-					int input = JOptionPane.showConfirmDialog(null, "Create new file?", "",
+					byte input = (byte) JOptionPane.showConfirmDialog(null, "Create new file?", "",
 							JOptionPane.YES_NO_CANCEL_OPTION, JOptionPane.QUESTION_MESSAGE);
 					if (input == JOptionPane.YES_OPTION) {
 						newFile = true;

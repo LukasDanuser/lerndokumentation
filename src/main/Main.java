@@ -49,7 +49,7 @@ public class Main {
 		JLabel jPassword = new JLabel("Password");
 		JTextField password1 = new JPasswordField();
 		Object[] ob = { jUserName, userName, jPassword, password1 };
-		int resultLogin = JOptionPane.showConfirmDialog(null, ob, "Login", JOptionPane.OK_CANCEL_OPTION);
+		byte resultLogin = (byte) JOptionPane.showConfirmDialog(null, ob, "Login", JOptionPane.OK_CANCEL_OPTION);
 
 		if (resultLogin == JOptionPane.OK_OPTION) {
 			userNameValue = userName.getText();
@@ -68,7 +68,7 @@ public class Main {
 				password1.setText("");
 				while (isValidLogin == false) {
 
-					resultLogin = JOptionPane.showConfirmDialog(null, ob, "Invalid login",
+					resultLogin = (byte) JOptionPane.showConfirmDialog(null, ob, "Invalid login",
 							JOptionPane.OK_CANCEL_OPTION);
 
 					if (resultLogin == JOptionPane.OK_OPTION) {
@@ -86,7 +86,7 @@ public class Main {
 					} catch (NullPointerException e1) {
 						userName.setText("");
 						password1.setText("");
-						resultLogin = JOptionPane.showConfirmDialog(null, ob, "Invalid login",
+						resultLogin = (byte) JOptionPane.showConfirmDialog(null, ob, "Invalid login",
 								JOptionPane.OK_CANCEL_OPTION);
 
 						if (resultLogin == JOptionPane.OK_OPTION) {
@@ -107,7 +107,7 @@ public class Main {
 			while (isValidLogin == false) {
 				userName.setText("");
 				password1.setText("");
-				resultLogin = JOptionPane.showConfirmDialog(null, ob, "Invalid login", JOptionPane.OK_CANCEL_OPTION);
+				resultLogin = (byte) JOptionPane.showConfirmDialog(null, ob, "Invalid login", JOptionPane.OK_CANCEL_OPTION);
 
 				if (resultLogin == JOptionPane.OK_OPTION) {
 					userNameValue = userName.getText();
@@ -125,7 +125,7 @@ public class Main {
 				} catch (NullPointerException e1) {
 					userName.setText("");
 					password1.setText("");
-					resultLogin = JOptionPane.showConfirmDialog(null, ob, "Invalid login",
+					resultLogin = (byte) JOptionPane.showConfirmDialog(null, ob, "Invalid login",
 							JOptionPane.OK_CANCEL_OPTION);
 
 					if (resultLogin == JOptionPane.OK_OPTION) {
@@ -149,7 +149,7 @@ public class Main {
 
 		collection = db.getCollection(username);
 
-		int answer = JOptionPane.showConfirmDialog(null, "Create new file?", "", JOptionPane.YES_NO_CANCEL_OPTION,
+		byte answer = (byte) JOptionPane.showConfirmDialog(null, "Create new file?", "", JOptionPane.YES_NO_CANCEL_OPTION,
 				JOptionPane.QUESTION_MESSAGE);
 		if (answer == JOptionPane.YES_OPTION) {
 			Frame.newFile = true;
