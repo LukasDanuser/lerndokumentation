@@ -17,6 +17,8 @@ import com.mongodb.DBObject;
 import com.mongodb.MongoClient;
 import com.mongodb.MongoClientURI;
 
+
+
 public class Main {
 
 	public static String role;
@@ -59,88 +61,26 @@ public class Main {
 		}
 		DBCursor results = collection.find(new BasicDBObject("username", userNameValue));
 
-		try {
-			username = results.one().get("username").toString();
-			password = results.one().get("password").toString();
-			if (checkPassword(passwordValue, password) == false) {
-				isValidLogin = false;
-				userName.setText("");
-				password1.setText("");
-				while (isValidLogin == false) {
+		while (isValidLogin == false) {
+			results = collection.find(new BasicDBObject("username", userNameValue));
+			if (results.size() != 0) {
+				username = results.one().get("username").toString();
+				password = results.one().get("password").toString();
 
-					resultLogin = (byte) JOptionPane.showConfirmDialog(null, ob, "Invalid login",
-							JOptionPane.OK_CANCEL_OPTION);
-
-					if (resultLogin == JOptionPane.OK_OPTION) {
-						userNameValue = userName.getText();
-						passwordValue = password1.getText();
-					} else {
-						System.exit(1);
-					}
-					if (checkPassword(passwordValue, password) == true) {
-						isValidLogin = true;
-					}
-					try {
-						username = results.one().get("username").toString();
-						password = results.one().get("password").toString();
-					} catch (NullPointerException e1) {
-						userName.setText("");
-						password1.setText("");
-						resultLogin = (byte) JOptionPane.showConfirmDialog(null, ob, "Invalid login",
-								JOptionPane.OK_CANCEL_OPTION);
-
-						if (resultLogin == JOptionPane.OK_OPTION) {
-							userNameValue = userName.getText();
-							passwordValue = password1.getText();
-						} else {
-							System.exit(1);
-						}
-						if (checkPassword(passwordValue, password) == true) {
-							isValidLogin = true;
-						}
-					}
+				if (checkPassword(passwordValue, password) == true) {
+					isValidLogin = true;
+					break;
 				}
 			}
-		} catch (NullPointerException e) {
-			isValidLogin = false;
-
-			while (isValidLogin == false) {
-				userName.setText("");
-				password1.setText("");
-				resultLogin = (byte) JOptionPane.showConfirmDialog(null, ob, "Invalid login",
-						JOptionPane.OK_CANCEL_OPTION);
-
-				if (resultLogin == JOptionPane.OK_OPTION) {
-					userNameValue = userName.getText();
-					passwordValue = password1.getText();
-				} else {
-					System.exit(1);
-				}
-				try {
-					results = collection.find(new BasicDBObject("username", userNameValue));
-					username = results.one().get("username").toString();
-					password = results.one().get("password").toString();
-					if (checkPassword(passwordValue, password) == true) {
-						isValidLogin = true;
-					}
-				} catch (NullPointerException e1) {
-					userName.setText("");
-					password1.setText("");
-					resultLogin = (byte) JOptionPane.showConfirmDialog(null, ob, "Invalid login",
-							JOptionPane.OK_CANCEL_OPTION);
-
-					if (resultLogin == JOptionPane.OK_OPTION) {
-						userNameValue = userName.getText();
-						passwordValue = password1.getText();
-					} else {
-						System.exit(1);
-					}
-					if (checkPassword(passwordValue, password) == true) {
-						isValidLogin = true;
-					}
-				}
+			userName.setText("");
+			password1.setText("");
+			resultLogin = (byte) JOptionPane.showConfirmDialog(null, ob, "Invalid login", JOptionPane.OK_CANCEL_OPTION);
+			if (resultLogin == JOptionPane.OK_OPTION) {
+				userNameValue = userName.getText();
+				passwordValue = password1.getText();
+			} else {
+				System.exit(1);
 			}
-
 		}
 
 		role = results.one().get("role").toString();
@@ -232,11 +172,8 @@ public class Main {
 	}
 
 	public static boolean checkPassword(String plaintext, String hashed) {
-		if (org.mindrot.jbcrypt.BCrypt.checkpw(plaintext, hashed)) {
-			return true;
-		} else {
-			return false;
-		}
+		return ((org.mindrot.jbcrypt.BCrypt.checkpw(plaintext, hashed)));
+		
 	}
 
 }
