@@ -107,7 +107,8 @@ public class Main {
 			while (isValidLogin == false) {
 				userName.setText("");
 				password1.setText("");
-				resultLogin = (byte) JOptionPane.showConfirmDialog(null, ob, "Invalid login", JOptionPane.OK_CANCEL_OPTION);
+				resultLogin = (byte) JOptionPane.showConfirmDialog(null, ob, "Invalid login",
+						JOptionPane.OK_CANCEL_OPTION);
 
 				if (resultLogin == JOptionPane.OK_OPTION) {
 					userNameValue = userName.getText();
@@ -149,8 +150,8 @@ public class Main {
 
 		collection = db.getCollection(username);
 
-		byte answer = (byte) JOptionPane.showConfirmDialog(null, "Create new file?", "", JOptionPane.YES_NO_CANCEL_OPTION,
-				JOptionPane.QUESTION_MESSAGE);
+		byte answer = (byte) JOptionPane.showConfirmDialog(null, "Create new file?", "",
+				JOptionPane.YES_NO_CANCEL_OPTION, JOptionPane.QUESTION_MESSAGE);
 		if (answer == JOptionPane.YES_OPTION) {
 			Frame.newFile = true;
 			Frame.fileName = JOptionPane.showInputDialog(null, "File name");

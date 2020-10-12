@@ -53,7 +53,6 @@ public class Frame implements ActionListener {
 	static JTextArea textArea;
 
 	public Frame() throws IOException {
-
 		textArea = new JTextArea();
 		textArea.setSize(WIDTH - 50, HEIGHT - 100);
 		textArea.setBackground(null);
@@ -360,7 +359,8 @@ public class Frame implements ActionListener {
 				JLabel jPasswordConfirm = new JLabel("Confirm password");
 				JTextField passwordConfirm = new JPasswordField();
 				Object[] ob = { jUserName, userName, jPassword, password1, jPasswordConfirm, passwordConfirm };
-				byte resultLogin = (byte) JOptionPane.showConfirmDialog(null, ob, "Login", JOptionPane.OK_CANCEL_OPTION);
+				byte resultLogin = (byte) JOptionPane.showConfirmDialog(null, ob, "Login",
+						JOptionPane.OK_CANCEL_OPTION);
 
 				collection = db.getCollection("users");
 				@SuppressWarnings("unused")
@@ -448,8 +448,8 @@ public class Frame implements ActionListener {
 							}
 							password1.setText("");
 							passwordConfirm.setText("");
-							resultLogin = (byte) JOptionPane.showConfirmDialog(null, ob, "Password confirmation incorrect!",
-									JOptionPane.OK_CANCEL_OPTION);
+							resultLogin = (byte) JOptionPane.showConfirmDialog(null, ob,
+									"Password confirmation incorrect!", JOptionPane.OK_CANCEL_OPTION);
 							if (resultLogin == JOptionPane.OK_OPTION) {
 								userNameValue = userName.getText();
 								passwordValue = password1.getText();
