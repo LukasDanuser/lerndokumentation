@@ -69,7 +69,6 @@ public class Frame implements ActionListener {
 		buttonSave.setBounds(150, 50, 120, 60);
 		buttonSave.addActionListener(this);
 		buttonSave.setBackground(new Color(125, 125, 125));
-		buttonSave.setFont(new Font("Comic Sans", Font.ITALIC, 15));
 		buttonSave.setForeground(new Color(250, 250, 250));
 		buttonSave.setBorder(BorderFactory.createEtchedBorder());
 		buttonSave.setFocusable(false);
@@ -78,7 +77,6 @@ public class Frame implements ActionListener {
 		buttenNewUser.setBounds(150, 50, 120, 60);
 		buttenNewUser.addActionListener(this);
 		buttenNewUser.setBackground(new Color(125, 125, 125));
-		buttenNewUser.setFont(new Font("Comic Sans", Font.ITALIC, 15));
 		buttenNewUser.setForeground(new Color(250, 250, 250));
 		buttenNewUser.setBorder(BorderFactory.createEtchedBorder());
 		buttenNewUser.setFocusable(false);
@@ -87,7 +85,6 @@ public class Frame implements ActionListener {
 		buttenRemoveUser.setBounds(150, 50, 120, 60);
 		buttenRemoveUser.addActionListener(this);
 		buttenRemoveUser.setBackground(new Color(125, 125, 125));
-		buttenRemoveUser.setFont(new Font("Comic Sans", Font.ITALIC, 15));
 		buttenRemoveUser.setForeground(new Color(250, 250, 250));
 		buttenRemoveUser.setBorder(BorderFactory.createEtchedBorder());
 		buttenRemoveUser.setFocusable(false);
@@ -96,7 +93,6 @@ public class Frame implements ActionListener {
 		buttonClear.setBounds(150, 50, 120, 60);
 		buttonClear.addActionListener(this);
 		buttonClear.setBackground(new Color(125, 125, 125));
-		buttonClear.setFont(new Font("Comic Sans", Font.ITALIC, 15));
 		buttonClear.setForeground(new Color(250, 250, 250));
 		buttonClear.setBorder(BorderFactory.createEtchedBorder());
 		buttonClear.setFocusable(false);
@@ -105,7 +101,6 @@ public class Frame implements ActionListener {
 		buttonRefresh.setBounds(150, 50, 120, 60);
 		buttonRefresh.addActionListener(this);
 		buttonRefresh.setBackground(new Color(125, 125, 125));
-		buttonRefresh.setFont(new Font("Comic Sans", Font.ITALIC, 15));
 		buttonRefresh.setForeground(new Color(250, 250, 250));
 		buttonRefresh.setBorder(BorderFactory.createEtchedBorder());
 		buttonRefresh.setFocusable(false);
@@ -114,7 +109,6 @@ public class Frame implements ActionListener {
 		buttonSearch.setBounds(150, 50, 120, 60);
 		buttonSearch.addActionListener(this);
 		buttonSearch.setBackground(new Color(125, 125, 125));
-		buttonSearch.setFont(new Font("Comic Sans", Font.ITALIC, 15));
 		buttonSearch.setForeground(new Color(250, 250, 250));
 		buttonSearch.setBorder(BorderFactory.createEtchedBorder());
 		buttonSearch.setFocusable(false);
@@ -123,7 +117,6 @@ public class Frame implements ActionListener {
 		buttonChangeFile.setBounds(150, 50, 120, 60);
 		buttonChangeFile.addActionListener(this);
 		buttonChangeFile.setBackground(new Color(125, 125, 125));
-		buttonChangeFile.setFont(new Font("Comic Sans", Font.ITALIC, 15));
 		buttonChangeFile.setForeground(new Color(250, 250, 250));
 		buttonChangeFile.setBorder(BorderFactory.createEtchedBorder());
 		buttonChangeFile.setFocusable(false);
@@ -132,7 +125,6 @@ public class Frame implements ActionListener {
 		buttonDelete.setBounds(150, 50, 120, 60);
 		buttonDelete.addActionListener(this);
 		buttonDelete.setBackground(new Color(125, 125, 125));
-		buttonDelete.setFont(new Font("Comic Sans", Font.ITALIC, 15));
 		buttonDelete.setForeground(new Color(250, 250, 250));
 		buttonDelete.setBorder(BorderFactory.createEtchedBorder());
 		buttonDelete.setFocusable(false);
