@@ -51,6 +51,8 @@ public class Frame implements ActionListener {
 	JButton buttonDelete;
 	JTextField textField;
 	static JTextArea textArea;
+	static JFrame frame2;
+	static JTextArea textArea2;
 
 	public Frame() throws IOException {
 		textArea = new JTextArea();
@@ -158,15 +160,44 @@ public class Frame implements ActionListener {
 
 	}
 
+	@SuppressWarnings({ "deprecation", "resource" })
 	public void changeFile() throws IOException {
 		DBCursor query = collection.find(new BasicDBObject("fileName", path));
 
 		newFile = false;
 		String fileName2 = fileName;
-		fileName = JOptionPane.showInputDialog(null, "Enter file name", "Open file", JOptionPane.DEFAULT_OPTION);
+		int WIDTH = (int) screenSize.getWidth();
+		int HEIGHT = (int) screenSize.getHeight();
+		String files = "";
+		MongoClient client = new MongoClient("localhost", 27017);
+		DB db = client.getDB("lerndokumentation");
+		DBCollection collection = db.getCollection(Main.username);
+		DBCursor cursor = collection.find();
+		textArea2 = new JTextArea();
+		textArea2.setSize(WIDTH - 50, HEIGHT - 100);
+		textArea2.setBackground(null);
+		textArea2.setEditable(false);
+		textArea2.setBorder(null);
+		textArea2.setLineWrap(true);
+		textArea2.setWrapStyleWord(true);
+		textArea2.setFocusable(true);
 
+		while (cursor.hasNext()) {
+			DBObject obj = cursor.next();
+			files = obj.get("fileName").toString();
+			textArea2.setText(textArea2.getText() + "\n" + files + "\n");
+		}
+		frame2 = new JFrame();
+		frame2.setSize(new Dimension(WIDTH, HEIGHT));
+		frame2.setLayout(new FlowLayout());
+		frame2.add(textArea2);
+		frame2.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
+		frame2.setVisible(true);
+		fileName = JOptionPane.showInputDialog(null, "Enter file name", "Open file", JOptionPane.DEFAULT_OPTION);
 		if (fileName == null) {
+			frame2.hide();
 			fileName = fileName2;
+
 			return;
 		}
 
@@ -196,6 +227,7 @@ public class Frame implements ActionListener {
 			}
 
 		}
+		frame2.hide();
 		path = fileName;
 		textArea.setText(query.one().get("content").toString());
 		frame.setTitle(path);

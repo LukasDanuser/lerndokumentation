@@ -117,7 +117,7 @@ public class Main {
 	}
 
 	@SuppressWarnings({ "resource", "deprecation" })
-	private static void openFile() {
+	public static void openFile() {
 
 		int WIDTH = (int) screenSize.getWidth();
 		int HEIGHT = (int) screenSize.getHeight();
@@ -183,6 +183,7 @@ public class Main {
 		if (input == null) {
 			System.exit(1);
 		}
+		frame.hide();
 	}
 
 	@SuppressWarnings({ "resource", "deprecation" })
