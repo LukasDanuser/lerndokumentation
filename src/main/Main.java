@@ -4,8 +4,6 @@ import java.awt.Dimension;
 import java.awt.FlowLayout;
 import java.awt.Toolkit;
 import java.io.IOException;
-import java.util.logging.Level;
-import java.util.logging.Logger;
 
 import javax.swing.JFrame;
 import javax.swing.JLabel;
@@ -20,7 +18,6 @@ import com.mongodb.DBCollection;
 import com.mongodb.DBCursor;
 import com.mongodb.DBObject;
 import com.mongodb.MongoClient;
-import com.mongodb.MongoClientURI;
 
 public class Main {
 
@@ -28,23 +25,16 @@ public class Main {
 	public static String username = "";
 	public static String adminPw = "";
 	private static String password = "";
+
 	static Dimension screenSize = Toolkit.getDefaultToolkit().getScreenSize();
 	static JFrame frame;
 	static JTextArea textArea;
 
 	public static void main(String[] args) throws IOException {
-		Logger mongoLogger = Logger.getLogger("org.mongodb.driver");
-		mongoLogger.setLevel(Level.SEVERE);
+		DbConnector connector = DbConnector.getInstance();
+		connector.connectDB();
 		@SuppressWarnings("unused")
-		MongoClientURI uri = new MongoClientURI(
-				"mongodb://lukas:secret.8@cluster0-shard-00-00.ez8ii.mongodb.net:27017,cluster0-shard-00-01.ez8ii.mongodb.net:27017,cluster0-shard-00-02.ez8ii.mongodb.net:27017/lerndokumentation?ssl=true&replicaSet=atlas-atekpy-shard-0&authSource=admin&retryWrites=true&w=majority");
-		@SuppressWarnings("resource")
-		MongoClient client = new MongoClient("localhost", 27017);
-		// MongoClient client = new MongoClient(uri);
-
-		@SuppressWarnings("deprecation")
-		DB db = client.getDB("lerndokumentation");
-
+		DB db = connector.getDB();
 		DBCollection collection = db.getCollection("users");
 
 		String userNameValue = "";
