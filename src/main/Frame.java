@@ -50,6 +50,15 @@ public class Frame implements ActionListener {
 	static JFrame frame2;
 	static JTextArea textArea2;
 
+	String userNameValue = "";
+	String passwordValue = "";
+	String pwConfirmValue = "";
+	String adminPasswordValue = "";
+
+	boolean userExists = true;
+	boolean adminPwValid = true;
+	boolean isValidLogin = false;
+
 	public Frame() throws IOException {
 		textArea = new JTextArea();
 		textArea.setSize(WIDTH - 50, HEIGHT - 100);
@@ -251,12 +260,6 @@ public class Frame implements ActionListener {
 	@SuppressWarnings("resource")
 	@Override
 	public void actionPerformed(ActionEvent event) {
-		String userNameValue = "";
-		String passwordValue = "";
-		String pwConfirmValue = "";
-		String adminPasswordValue = "";
-
-		boolean isValidLogin = false;
 
 		DBCursor query = collection.find(new BasicDBObject("fileName", path));
 		SimpleDateFormat formatter = new SimpleDateFormat("dd/MM/yyyy HH:mm");
@@ -272,8 +275,7 @@ public class Frame implements ActionListener {
 		path = fileName;
 
 		if (event.getSource() == buttenRemoveUser) {
-			boolean userExists = true;
-			boolean adminPwValid = true;
+
 			collection = db.getCollection("users");
 
 			JLabel jUserName = new JLabel("Enter the name of the user you want to remove");
@@ -329,7 +331,7 @@ public class Frame implements ActionListener {
 							break;
 						}
 					}
-					if (Main.checkPassword(adminPasswordValue, Main.adminPw) && !adminPasswordValue.equals("")) {
+					if (isPwValid()) {
 						adminPwValid = true;
 
 					}
@@ -460,7 +462,7 @@ public class Frame implements ActionListener {
 							validUsername = true;
 						}
 					}
-					if (!passwordValue.equals(pwConfirmValue) | passwordValue.equals("")) {
+					if (!isPwCorrect()) {
 						validPassword = false;
 						while (validPassword == false) {
 							if (proceed == false) {
@@ -477,7 +479,7 @@ public class Frame implements ActionListener {
 							} else {
 								break;
 							}
-							if (passwordValue.equals(pwConfirmValue) && !passwordValue.equals("")) {
+							if (isPwCorrect()) {
 								validPassword = true;
 								isValidLogin = true;
 							}
@@ -491,7 +493,7 @@ public class Frame implements ActionListener {
 							}
 						}
 					}
-					if (isValidLogin && userNameValue != null && passwordValue != null) {
+					if (isLoginValid()) {
 						hashedPassword = org.mindrot.jbcrypt.BCrypt.hashpw(passwordValue,
 								org.mindrot.jbcrypt.BCrypt.gensalt(10));
 
@@ -714,6 +716,18 @@ public class Frame implements ActionListener {
 			}
 		}
 		JOptionPane.showMessageDialog(null, results, "Results", JOptionPane.INFORMATION_MESSAGE);
+	}
+
+	private boolean isPwCorrect() {
+		return (passwordValue.equals(pwConfirmValue) && !passwordValue.equals(""));
+	}
+
+	private boolean isLoginValid() {
+		return (isValidLogin && userNameValue != null && passwordValue != null);
+	}
+
+	private boolean isPwValid() {
+		return (Main.checkPassword(adminPasswordValue, Main.adminPw) && !adminPasswordValue.equals(""));
 	}
 
 }

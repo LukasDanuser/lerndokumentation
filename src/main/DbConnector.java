@@ -21,37 +21,12 @@ public class DbConnector {
 		return instance;
 	}
 
-	@SuppressWarnings("unused")
-	public MongoClient getClient() throws IOException {
-		String connectionString1 = "";
-		String connectionString2 = "";
-		String passwordString = "";
-		FileInputStream fis = new FileInputStream(
-				"/home/lukasd/eclipse-workspace/lerndokumentation/src/connection.properties");
-		Properties prop = new Properties();
-		prop.load(fis);
-		connectionString1 = prop.getProperty("connectionString1");
-		connectionString2 = prop.getProperty("connectionString2");
-		passwordString = prop.getProperty("password");
-		Logger mongoLogger = Logger.getLogger("org.mongodb.driver");
-		mongoLogger.setLevel(Level.SEVERE);
-		@SuppressWarnings("unused")
-		MongoClientURI uri = new MongoClientURI(connectionString1 + passwordString + connectionString2);
-		@SuppressWarnings("resource")
-		MongoClient client = new MongoClient("localhost", 27017);
-		// MongoClient client = new MongoClient(uri);
-
-		@SuppressWarnings("deprecation")
-		DB db = client.getDB("lerndokumentation");
-		return client;
-	}
-
 	public DB getDB() throws IOException {
 		String connectionString1 = "";
 		String connectionString2 = "";
 		String passwordString = "";
 		FileInputStream fis = new FileInputStream(
-				"/home/lukasd/eclipse-workspace/lerndokumentation/src/connection.properties");
+				"src/connection.properties");
 		Properties prop = new Properties();
 		prop.load(fis);
 		connectionString1 = prop.getProperty("connectionString1");
