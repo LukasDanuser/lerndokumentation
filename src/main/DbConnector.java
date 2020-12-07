@@ -1,7 +1,9 @@
 package main;
 
+import java.io.File;
 import java.io.FileInputStream;
 import java.io.IOException;
+import java.io.InputStream;
 import java.util.Properties;
 import java.util.logging.Level;
 import java.util.logging.Logger;
@@ -22,48 +24,49 @@ public class DbConnector {
 	}
 
 	public DB getDB() throws IOException {
-		String connectionString1 = "";
-		String connectionString2 = "";
-		String passwordString = "";
-		FileInputStream fis = new FileInputStream(
-				"src/connection.properties");
-		Properties prop = new Properties();
-		prop.load(fis);
-		connectionString1 = prop.getProperty("connectionString1");
-		connectionString2 = prop.getProperty("connectionString2");
-		passwordString = prop.getProperty("password");
+		String connectionString = "";
+		File file = new File("connection.properties");
+		String path = file.getAbsolutePath();
+		try (InputStream input = new FileInputStream(path)) {
+			Properties prop = new Properties();
+			prop.load(input);
+			connectionString = prop.getProperty("connectionString");
+		} catch (IOException ex) {
+			ex.printStackTrace();
+		}
 		Logger mongoLogger = Logger.getLogger("org.mongodb.driver");
 		mongoLogger.setLevel(Level.SEVERE);
 		@SuppressWarnings("unused")
-		MongoClientURI uri = new MongoClientURI(connectionString1 + passwordString + connectionString2);
+		MongoClientURI uri = new MongoClientURI(connectionString);
 		@SuppressWarnings("resource")
-		MongoClient client = new MongoClient("localhost", 27017);
-		// MongoClient client = new MongoClient(uri);
+//		MongoClient client = new MongoClient("localhost", 27017);
+		MongoClient client = new MongoClient(uri);
 
 		@SuppressWarnings("deprecation")
 		DB db = client.getDB("lerndokumentation");
+
 		return db;
 	}
 
 	@SuppressWarnings("unused")
 	public void connectDB() throws IOException {
-		String connectionString1 = "";
-		String connectionString2 = "";
-		String passwordString = "";
-		FileInputStream fis = new FileInputStream(
-				"/home/lukasd/eclipse-workspace/lerndokumentation/src/connection.properties");
-		Properties prop = new Properties();
-		prop.load(fis);
-		connectionString1 = prop.getProperty("connectionString1");
-		connectionString2 = prop.getProperty("connectionString2");
-		passwordString = prop.getProperty("password");
+		String connectionString = "";
+		File file = new File("connection.properties");
+		String path = file.getAbsolutePath();
+		try (InputStream input = new FileInputStream(path)) {
+			Properties prop = new Properties();
+			prop.load(input);
+			connectionString = prop.getProperty("connectionString");
+		} catch (IOException ex) {
+			ex.printStackTrace();
+		}
 		Logger mongoLogger = Logger.getLogger("org.mongodb.driver");
 		mongoLogger.setLevel(Level.SEVERE);
 		@SuppressWarnings("unused")
-		MongoClientURI uri = new MongoClientURI(connectionString1 + passwordString + connectionString2);
+		MongoClientURI uri = new MongoClientURI(connectionString);
 		@SuppressWarnings("resource")
-		MongoClient client = new MongoClient("localhost", 27017);
-		// MongoClient client = new MongoClient(uri);
+//		MongoClient client = new MongoClient("localhost", 27017);
+		MongoClient client = new MongoClient(uri);
 
 		@SuppressWarnings("deprecation")
 		DB db = client.getDB("lerndokumentation");
