@@ -6,17 +6,17 @@
 			<attribute name="module" value="true"/>
 		</attributes>
 	</classpathentry>
-	<classpathentry kind="lib" path="/home/lukasd/eclipse-workspace/lerndokumentation/src/Referenced Libraries/bson-3.0.4.jar"/>
-	<classpathentry kind="lib" path="/home/lukasd/eclipse-workspace/lerndokumentation/src/Referenced Libraries/bson-3.0.4-javadoc.jar"/>
-	<classpathentry kind="lib" path="/home/lukasd/eclipse-workspace/lerndokumentation/src/Referenced Libraries/bson-3.0.4-sources.jar"/>
-	<classpathentry kind="lib" path="/home/lukasd/eclipse-workspace/lerndokumentation/src/Referenced Libraries/jbcrypt-0.3m.jar"/>
-	<classpathentry kind="lib" path="/home/lukasd/eclipse-workspace/lerndokumentation/src/Referenced Libraries/mongodb-driver-3.0.4.jar"/>
-	<classpathentry kind="lib" path="/home/lukasd/eclipse-workspace/lerndokumentation/src/Referenced Libraries/mongodb-driver-3.0.4-javadoc.jar"/>
-	<classpathentry kind="lib" path="/home/lukasd/eclipse-workspace/lerndokumentation/src/Referenced Libraries/mongodb-driver-3.0.4-sources.jar"/>
-	<classpathentry kind="lib" path="/home/lukasd/eclipse-workspace/lerndokumentation/src/Referenced Libraries/mongodb-driver-core-3.0.4.jar"/>
-	<classpathentry kind="lib" path="/home/lukasd/eclipse-workspace/lerndokumentation/src/Referenced Libraries/mongodb-driver-core-3.0.4-javadoc.jar"/>
-	<classpathentry kind="lib" path="/home/lukasd/eclipse-workspace/lerndokumentation/src/Referenced Libraries/mongodb-driver-core-3.0.4-sources.jar"/>
-	<classpathentry kind="lib" path="/home/lukasd/eclipse-workspace/lerndokumentation/src/Referenced Libraries/mongo-java-driver-3.12.6.jar"/>
-	<classpathentry kind="lib" path="/home/lukasd/eclipse-workspace/lerndokumentation/src/Referenced Libraries/spring-security-config-3.0.5.release.jar"/>
+	<classpathentry kind="lib" path="C:/Users/lukas/eclipse-workspace/lerndokumentation/src/Referenced Libraries/bson-3.0.4.jar"/>
+	<classpathentry kind="lib" path="C:/Users/lukas/eclipse-workspace/lerndokumentation/src/Referenced Libraries/bson-3.0.4-javadoc.jar"/>
+	<classpathentry kind="lib" path="C:/Users/lukas/eclipse-workspace/lerndokumentation/src/Referenced Libraries/bson-3.0.4-sources.jar"/>
+	<classpathentry kind="lib" path="C:/Users/lukas/eclipse-workspace/lerndokumentation/src/Referenced Libraries/jbcrypt-0.3m.jar"/>
+	<classpathentry kind="lib" path="C:/Users/lukas/eclipse-workspace/lerndokumentation/src/Referenced Libraries/mongodb-driver-3.0.4.jar"/>
+	<classpathentry kind="lib" path="C:/Users/lukas/eclipse-workspace/lerndokumentation/src/Referenced Libraries/mongodb-driver-3.0.4-javadoc.jar"/>
+	<classpathentry kind="lib" path="C:/Users/lukas/eclipse-workspace/lerndokumentation/src/Referenced Libraries/mongodb-driver-3.0.4-sources.jar"/>
+	<classpathentry kind="lib" path="C:/Users/lukas/eclipse-workspace/lerndokumentation/src/Referenced Libraries/mongodb-driver-core-3.0.4.jar"/>
+	<classpathentry kind="lib" path="C:/Users/lukas/eclipse-workspace/lerndokumentation/src/Referenced Libraries/mongodb-driver-core-3.0.4-javadoc.jar"/>
+	<classpathentry kind="lib" path="C:/Users/lukas/eclipse-workspace/lerndokumentation/src/Referenced Libraries/mongodb-driver-core-3.0.4-sources.jar"/>
+	<classpathentry kind="lib" path="C:/Users/lukas/eclipse-workspace/lerndokumentation/src/Referenced Libraries/mongo-java-driver-3.12.6.jar"/>
+	<classpathentry kind="lib" path="C:/Users/lukas/eclipse-workspace/lerndokumentation/src/Referenced Libraries/spring-security-config-3.0.5.release.jar"/>
 	<classpathentry kind="output" path="bin"/>
 </classpath>
