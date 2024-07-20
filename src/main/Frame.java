@@ -154,9 +154,6 @@ public class Frame implements ActionListener {
 		frame.add(textArea);
 		frame.setVisible(true);
 
-		WIDTH = frame.getWidth();
-		HEIGHT = frame.getHeight();
-
 		path = fileName;
 		frame.setTitle(path);
 		collection = db.getCollection(Main.username);

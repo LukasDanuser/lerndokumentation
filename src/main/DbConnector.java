@@ -39,8 +39,8 @@ public class DbConnector {
 		@SuppressWarnings("unused")
 		MongoClientURI uri = new MongoClientURI(connectionString);
 		@SuppressWarnings("resource")
-//		MongoClient client = new MongoClient("localhost", 27017);
-		MongoClient client = new MongoClient(uri);
+		MongoClient client = new MongoClient("localhost", 27017);
+//		MongoClient client = new MongoClient(uri);
 
 		@SuppressWarnings("deprecation")
 		DB db = client.getDB("lerndokumentation");
@@ -65,8 +65,8 @@ public class DbConnector {
 		@SuppressWarnings("unused")
 		MongoClientURI uri = new MongoClientURI(connectionString);
 		@SuppressWarnings("resource")
-//		MongoClient client = new MongoClient("localhost", 27017);
-		MongoClient client = new MongoClient(uri);
+		MongoClient client = new MongoClient("localhost", 27017);
+//		MongoClient client = new MongoClient(uri);
 
 		@SuppressWarnings("deprecation")
 		DB db = client.getDB("lerndokumentation");
